@@ -24,7 +24,7 @@ namespace Game
 
 
         // ------------ INIT -------------
-        #region variables
+        #region init
 
         private void Awake() 
         {

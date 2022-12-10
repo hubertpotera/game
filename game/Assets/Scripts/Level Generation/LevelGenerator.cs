@@ -15,7 +15,7 @@ namespace Game
 
         private Vector2Int _prevPlayerCoords = Vector2Int.zero;
 
-        private Dictionary<Vector2Int, Tile> _map;
+        private Dictionary<Vector2Int, WorldTile> _map;
 
         #endregion
 
@@ -24,19 +24,19 @@ namespace Game
 
 
         // ------------ INIT -------------
-        #region variables
+        #region init
 
         private void Awake() 
         {
             Vector2Int playerCoords = PosToCoords(_player.position);
 
-            _map = new Dictionary<Vector2Int, Tile>();
+            _map = new Dictionary<Vector2Int, WorldTile>();
             for (int x = -_generationDist+1; x < _generationDist; x++)
             {
                 for (int y = -_generationDist+1; y < _generationDist; y++)
                 {
                     Vector2Int coords = playerCoords + new Vector2Int(x, y);
-                    _map.Add(coords, new Tile(coords));
+                    _map.Add(coords, new WorldTile(coords));
                 }
             }
         }
@@ -71,7 +71,7 @@ namespace Game
 
         private Vector2Int PosToCoords(Vector3 pos)
         {
-            Vector2Int coords = new Vector2Int((int)(pos.x/Tile.TileWidth), (int)(pos.z/Tile.TileWidth));
+            Vector2Int coords = new Vector2Int((int)(pos.x/WorldTile.TileWidth), (int)(pos.z/WorldTile.TileWidth));
             coords += pos.x < 0 ? Vector2Int.left : Vector2Int.zero; 
             coords += pos.z < 0 ? Vector2Int.down : Vector2Int.zero; 
             return coords;
@@ -110,7 +110,7 @@ namespace Game
                 {
                     _map[toDelete[i]].Delete();
                     _map.Remove(toDelete[i]);
-                    _map[toCreate[i]] = new Tile(toCreate[i]);
+                    _map[toCreate[i]] = new WorldTile(toCreate[i]);
                 }
             }
         }
@@ -144,12 +144,12 @@ namespace Game
             }
             return wall;
         }
-
-        #endregion
-
+        
         private void OnValidate() 
         {
             if(_generationDist < 0) _generationDist = 0;
         }
+        
+        #endregion
     }
 }
