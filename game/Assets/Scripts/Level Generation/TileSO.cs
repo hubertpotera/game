@@ -36,8 +36,6 @@ namespace Game
 
         public void UpdateVariabes()
         {
-            Debug.Log(name + ": update");
-
             Connections = new HashSet<Connection>();
             Connections.Add(North);
             Connections.Add(East);

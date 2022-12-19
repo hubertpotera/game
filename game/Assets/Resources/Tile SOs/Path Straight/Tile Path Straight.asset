@@ -10,11 +10,10 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 0dca87128e9c8734ea8e541c0d17a5bf, type: 3}
-  m_Name: Tile Path Turn
+  m_Name: Tile Path Straight
   m_EditorClassIdentifier: 
-  prefab: {fileID: 498736430745184305, guid: 149ec06fbb934fc4894f29516df83289, type: 3}
-  North: 0
-  East: 1
+  prefab: {fileID: 6895171947930694606, guid: 508886fb0e7b0814082232d7e3e46c9f, type: 3}
+  North: 1
+  East: 0
   South: 1
   West: 0
-  ConnectionsOrdered: 
