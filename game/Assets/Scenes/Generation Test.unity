@@ -552,7 +552,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   test: 0
   _player: {fileID: 1603597247}
-  _generationDist: 10
+  _generationDist: 5
   _seed: 0
 --- !u!4 &1858692351
 Transform:

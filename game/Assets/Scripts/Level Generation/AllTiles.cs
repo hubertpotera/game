@@ -5,36 +5,33 @@ namespace Game
 {
     public static class AllTiles 
     {
-        public static List<TileSO> Empty;
-        public static List<TileSO> PathStraight;
-        public static List<TileSO> PathTurn;
+        public static List<GameObject> Empty;
+        public static List<GameObject> PathStraight;
+        public static List<GameObject> PathTurn;
         
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
         public static void UpdateVariables()
         {
-            TileSO[] tiles;
+            GameObject[] tiles;
 
-            Empty = new List<TileSO>();
-            tiles = Resources.LoadAll<TileSO>("Tile SOs/Empty");
+            Empty = new List<GameObject>();
+            tiles = Resources.LoadAll<GameObject>("Tiles/Empty");
             foreach (var tile in tiles)
             {
-                tile.UpdateVariabes();
                 Empty.Add(tile);
             }
 
-            PathStraight = new List<TileSO>();
-            tiles = Resources.LoadAll<TileSO>("Tile SOs/Path Straight");
+            PathStraight = new List<GameObject>();
+            tiles = Resources.LoadAll<GameObject>("Tiles/Path Straight");
             foreach (var tile in tiles)
             {
-                tile.UpdateVariabes();
                 PathStraight.Add(tile);
             }
 
-            PathTurn = new List<TileSO>();
-            tiles = Resources.LoadAll<TileSO>("Tile SOs/Path Turn");
+            PathTurn = new List<GameObject>();
+            tiles = Resources.LoadAll<GameObject>("Tiles/Path Turn");
             foreach (var tile in tiles)
             {
-                tile.UpdateVariabes();
                 PathTurn.Add(tile);
             }
         }

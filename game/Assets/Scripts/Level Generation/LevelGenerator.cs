@@ -14,16 +14,12 @@ namespace Game
         private Transform _player;
         [SerializeField]
         private int _generationDist;
-        [SerializeField]
-        private int _seed;
-
 
         private System.Random _prng;
 
         private Vector2Int _prevPlayerCoords = Vector2Int.zero;
 
         private Dictionary<Vector2Int, WorldTile> _map;
-
         private List<float> _pathAngles;
         private List<Vector2Int> _lastPathTile;
         private List<Vector2Int> _lastPathDir;
@@ -39,7 +35,7 @@ namespace Game
 
         private void Awake() 
         {
-            _prng = new System.Random(_seed);
+            _prng = new System.Random();
             _pathAngles = new List<float>();
             _lastPathTile = new List<Vector2Int>();
             _lastPathDir = new List<Vector2Int>();
@@ -75,106 +71,49 @@ namespace Game
         // ----------- METHODS -----------
         #region  methods
 
-        private Vector2Int PosToCoords(Vector3 pos)
-        {
-            Vector2Int coords = new Vector2Int((int)(pos.x/WorldTile.TileWidth), (int)(pos.z/WorldTile.TileWidth));
-            coords += pos.x < 0 ? Vector2Int.left : Vector2Int.zero; 
-            coords += pos.z < 0 ? Vector2Int.down : Vector2Int.zero; 
-            return coords;
-        }
-
         private void UpdateMap(Vector2Int prevCoords, Vector2Int newCoords)
         {
-            Vector2Int change = newCoords-prevCoords;
+            Vector2Int coordsChange = newCoords-prevCoords;
 
             if((prevCoords - newCoords).sqrMagnitude > 1)
             {
-                // May cause a bug when going a bigger distance than just diagonaly
-                Vector2Int nextCoords = prevCoords + new Vector2Int(change.x, 0);
+                // Right now this only works when going diagonaly
+                // May cause a bug when going a bigger distance than just that
+                Vector2Int nextCoords = prevCoords + new Vector2Int(coordsChange.x, 0);
                 UpdateMap(prevCoords, nextCoords);
-                UpdateMap(nextCoords, nextCoords + new Vector2Int(0, change.y));
+                UpdateMap(nextCoords, nextCoords + new Vector2Int(0, coordsChange.y));
                 return;
             }
 
             List<Vector2Int> toDelete = new List<Vector2Int>();
             List<Vector2Int> toCreate = new List<Vector2Int>();
-            if(change.y == 0)
+            if(coordsChange.y == 0) // Horizonatal movement
             {
-                // Horizonatal movement
-                toDelete = GetVerticalWall(newCoords - change*_generationDist, _generationDist);
-                toCreate = GetVerticalWall(newCoords + change*(_generationDist-1), _generationDist);
+                toDelete = GetVerticalLine(newCoords - coordsChange*_generationDist, _generationDist);
+                toCreate = GetVerticalLine(newCoords + coordsChange*(_generationDist-1), _generationDist);
             }
-            else
+            else // Vertical movement
             {
-                // Vertical movement
-                toDelete = GetHorizontalWall(newCoords - change*_generationDist, _generationDist);
-                toCreate = GetHorizontalWall(newCoords + change*(_generationDist-1), _generationDist);
+                toDelete = GetHorizontalLine(newCoords - coordsChange*_generationDist, _generationDist);
+                toCreate = GetHorizontalLine(newCoords + coordsChange*(_generationDist-1), _generationDist);
             }
 
-            Vector2 middle = newCoords;
-            for(int i = 0; i < _pathAngles.Count; i++)
+            // Update paths
+            for(int i = 0; i < _lastPathTile.Count; i++)
             {
-                int count = 0;
+                // Deleting and finding new last tiles
                 if(toDelete.Contains(_lastPathTile[i]))
                 {
-                    Vector2Int theTile = _lastPathTile[i];
-                    Vector2Int[] dirs = { Vector2Int.up, Vector2Int.right, Vector2Int.down, Vector2Int.left };
-                    while (toDelete.Contains(theTile))
-                    {
-                        foreach (var dir in dirs)
-                        {
-                            if(!_map.ContainsKey(theTile+dir)) continue;
-                            if(_map[theTile+dir].Tile.Connections.Contains(TileSO.Connection.Path))
-                            {
-                                _map[theTile].Delete();
-                                _map.Remove(theTile);
-                                toDelete.Remove(theTile);
-                                theTile = theTile+dir;
-                                _lastPathTile[i] = theTile;
-                                _lastPathDir[i] = -dir;
-                                break;
-                            }
-                        }
-                        count++;
-                        if(count > 100) break;
-                    }
-                    Vector2 avgEndTile = Vector2.zero;
-                    foreach (var tile in _lastPathTile)
-                    {
-                        avgEndTile += tile;
-                    }
-                    avgEndTile /= _lastPathTile.Count;
-                    Vector2 pathDir = _lastPathTile[i] - avgEndTile;
-                    _pathAngles[i] = -Vector2.SignedAngle(Vector2.up, pathDir); //TODO make this good
+                    FindLostLastPathTile(i, ref toDelete);
                     continue;
                 }
 
+                // Continuing the path
                 Vector2Int nextTile = _lastPathTile[i] + _lastPathDir[i];
                 if(toCreate.Contains(nextTile)) 
                 {
                     _pathAngles[i] += 10f*(2*Mathf.PerlinNoise(0.01f*newCoords.x, 0.01f*newCoords.y)-1);
-                }
-
-                while(toCreate.Contains(nextTile)) 
-                {
-                    float goingToPathAngle = -Vector2.SignedAngle(change, Quaternion.Euler(0f, 0f, -_pathAngles[i]) * Vector2.up);
-                    float goingToTileAngle = -Vector2.SignedAngle(change, nextTile-middle);
-                    Vector2Int nextTileDir = Vector2Int.zero;
-                    if(Mathf.Abs(goingToTileAngle) < Mathf.Abs(goingToPathAngle)) 
-                    {
-                        nextTileDir = RotateV2Int(change, Sign(goingToPathAngle));
-                    }
-                    else 
-                    {
-                        nextTileDir = change;
-                    }
-                    _lastPathTile[i] = nextTile;
-                    _lastPathDir[i] = nextTileDir;
-
-                    _map[nextTile] = new WorldTile(nextTile, WorldTile.TileType.Path, new Vector2Int[0]);
-                    toCreate.Remove(nextTile);
-
-                    nextTile += nextTileDir;
+                    ContinuePath(i, nextTile, coordsChange, newCoords, ref toCreate);
                 }
             }
 
@@ -185,7 +124,7 @@ namespace Game
             }
             for(int i = 0; i < toCreate.Count; i++)
             {
-                _map[toCreate[i]] = new WorldTile(toCreate[i], WorldTile.TileType.Empty, new Vector2Int[0]);
+                _map[toCreate[i]] = new WorldTile(toCreate[i], WorldTile.TileType.Empty, new Vector2Int[0], _prng);
             }
         }
 
@@ -200,8 +139,8 @@ namespace Game
                 {
                     Vector2Int coords = playerCoords + new Vector2Int(x, y);
 
-                    if(x == 0) _map.Add(coords, new WorldTile(coords, WorldTile.TileType.Path, new Vector2Int[0]));
-                    else _map.Add(coords, new WorldTile(coords, WorldTile.TileType.Empty, new Vector2Int[0]));
+                    if(x == 0) _map.Add(coords, new WorldTile(coords, WorldTile.TileType.Path, new Vector2Int[]{Vector2Int.up, Vector2Int.down}, _prng));
+                    else _map.Add(coords, new WorldTile(coords, WorldTile.TileType.Empty, new Vector2Int[0], _prng));
                 }
             }
             _pathAngles.Add(0);
@@ -212,8 +151,80 @@ namespace Game
             _lastPathDir.Add(Vector2Int.down);
         }
 
+        private void FindLostLastPathTile(int pathIdx, ref List<Vector2Int> toDelete)
+        {
+            int count = 0;
+            // Find next viable path tile, that isn't set for deletion
+            Vector2Int theTile = _lastPathTile[pathIdx];
+            while (toDelete.Contains(theTile))
+            {
+                foreach (var dir in _map[theTile].ConnectionDirs)
+                {
+                    if(!_map.ContainsKey(theTile+dir)) continue;
+                    if(_map[theTile+dir].Type == WorldTile.TileType.Path)
+                    {
+                        // Delete the path
+                        _map[theTile].Delete();
+                        _map.Remove(theTile);
+                        toDelete.Remove(theTile);
+                        // Continue check for the next tile
+                        theTile = theTile+dir;
+                        // Update path variables
+                        _lastPathTile[pathIdx] = theTile;
+                        _lastPathDir[pathIdx] = -dir;
+                        break;
+                    }
+                }
+                count++;
+                if(count > 100)
+                {
+                    Debug.LogError("Infinite Loop when finding lost path");
+                    break;
+                }
+            }
+
+            // Calculate the path angle
+            Vector2 avgEndTile = Vector2.zero;
+            foreach (var tile in _lastPathTile)
+            {
+                avgEndTile += tile;
+            }
+            avgEndTile /= _lastPathTile.Count;
+            Vector2 pathDir = _lastPathTile[pathIdx] - avgEndTile;
+            _pathAngles[pathIdx] = -Vector2.SignedAngle(Vector2.up, pathDir);
+        }
+
+        private void ContinuePath(int pathIdx, Vector2Int nextTile, Vector2Int coordsChange, Vector2Int newCoords, ref List<Vector2Int> toCreate)
+        {
+            do
+            {
+                // Add new tiles to the side, until the angle from player to tile excedes the path angle
+                float goingToPathAngle = -Vector2.SignedAngle(coordsChange, Quaternion.Euler(0f, 0f, -_pathAngles[pathIdx]) * Vector2.up);
+                float goingToTileAngle = -Vector2.SignedAngle(coordsChange, nextTile-newCoords);
+                Vector2Int nextTileDir = Vector2Int.zero;
+                if(Mathf.Abs(goingToTileAngle) < Mathf.Abs(goingToPathAngle)) 
+                {
+                    nextTileDir = Misc.RotateV2Int(coordsChange, Sign(goingToPathAngle));
+                }
+                else 
+                {
+                    nextTileDir = coordsChange;
+                }
+
+                // Make the new tile
+                _map[nextTile] = new WorldTile(nextTile, WorldTile.TileType.Path, new Vector2Int[]{-_lastPathDir[pathIdx],nextTileDir}, _prng);
+                toCreate.Remove(nextTile);
+
+                // Update the path variables
+                _lastPathTile[pathIdx] = nextTile;
+                _lastPathDir[pathIdx] = nextTileDir;
+
+                nextTile += nextTileDir;
+            } while(toCreate.Contains(nextTile));
+        }
+
         /// <summary>Range 1 will return 1 block</summary>
-        private List<Vector2Int> GetHorizontalWall(Vector2Int middle, int range)
+        private List<Vector2Int> GetHorizontalLine(Vector2Int middle, int range)
         {
             if(range <= 0) return new List<Vector2Int>();
 
@@ -228,7 +239,7 @@ namespace Game
         }
 
         /// <summary>Range 1 will return 1 block</summary>
-        private List<Vector2Int> GetVerticalWall(Vector2Int middle, int range)
+        private List<Vector2Int> GetVerticalLine(Vector2Int middle, int range)
         {
             if(range <= 0) return new List<Vector2Int>();
 
@@ -242,24 +253,12 @@ namespace Game
             return wall;
         }
 
-        /// <summary>1 for right, -1 for left</summary>
-        private static Vector2Int RotateV2Int(Vector2Int v, int dir)
+        private Vector2Int PosToCoords(Vector3 pos)
         {
-            dir = Mathf.Clamp(dir, -1, 1);
-            if(v.x == 0)    return new Vector2Int(dir*v.y, 0);
-            else            return new Vector2Int(0, dir*-v.x);
-        }
-
-        private static Vector2Int RotateV2IntRight(Vector2Int v)
-        {
-            if(v.x == 0)    return new Vector2Int(v.y, 0);
-            else            return new Vector2Int(0, -v.x);
-        }
-
-        private static Vector2Int RotateV2IntLeft(Vector2Int v)
-        {
-            if(v.x == 0)    return new Vector2Int(-v.y, 0);
-            else            return new Vector2Int(0, v.x);
+            Vector2Int coords = new Vector2Int((int)(pos.x/WorldTile.TileWidth), (int)(pos.z/WorldTile.TileWidth));
+            coords += pos.x < 0 ? Vector2Int.left : Vector2Int.zero; 
+            coords += pos.z < 0 ? Vector2Int.down : Vector2Int.zero; 
+            return coords;
         }
 
         private static int Sign(float x)
