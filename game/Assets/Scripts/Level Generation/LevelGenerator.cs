@@ -7,23 +7,22 @@ namespace Game
     {
         // ---------- VARIABLES ----------
         #region variables
-        [SerializeField]
-        private float test;
 
         [SerializeField]
         private Transform _player;
         [SerializeField]
         private int _generationDist;
-
-        private System.Random _prng;
+        [SerializeField]
+        private int _treeDistFromPath;
 
         private Vector2Int _prevPlayerCoords = Vector2Int.zero;
 
-        private Dictionary<Vector2Int, WorldTile> _map;
+        private Dictionary<Vector2Int, Tile> _map;
         private List<float> _pathAngles;
         private List<Vector2Int> _lastPathTile;
         private List<Vector2Int> _lastPathDir;
-
+        
+        
         #endregion
 
 
@@ -35,11 +34,9 @@ namespace Game
 
         private void Awake() 
         {
-            _prng = new System.Random();
             _pathAngles = new List<float>();
             _lastPathTile = new List<Vector2Int>();
             _lastPathDir = new List<Vector2Int>();
-
             GenerateStart();
         }
 
@@ -117,6 +114,7 @@ namespace Game
                 }
             }
 
+            // Finally, place and remove all tiles that weren't handlet yet
             for(int i = 0; i < toDelete.Count; i++)
             {
                 _map[toDelete[i]].Delete();
@@ -124,23 +122,62 @@ namespace Game
             }
             for(int i = 0; i < toCreate.Count; i++)
             {
-                _map[toCreate[i]] = new WorldTile(toCreate[i], WorldTile.TileType.Empty, new Vector2Int[0], _prng);
+                _map[toCreate[i]] = new Tile(toCreate[i], Tile.TileType.Empty, new Vector2Int[0]);
             }
+            
+            // PlaceTrees
+            //TODO everything here
+            if(coordsChange.y == 0) // Horizonatal movement
+            {
+                toDelete = GetVerticalLine(newCoords - coordsChange*(_generationDist-_treeDistFromPath), _generationDist-_treeDistFromPath);
+                toCreate = GetVerticalLine(newCoords + coordsChange*(_generationDist-1-_treeDistFromPath), _generationDist-_treeDistFromPath);
+            }
+            else // Vertical movement
+            {
+                toDelete = GetHorizontalLine(newCoords - coordsChange*(_generationDist-_treeDistFromPath), _generationDist-_treeDistFromPath);
+                toCreate = GetHorizontalLine(newCoords + coordsChange*(_generationDist-1-_treeDistFromPath), _generationDist-_treeDistFromPath);
+            }
+
+            for (int i = 0; i < toCreate.Count; i++)
+            {
+                bool valid = true;
+                for (int x = -_treeDistFromPath; x <= _treeDistFromPath; x++)
+                {
+                    for (int y = -_treeDistFromPath; y <= _treeDistFromPath; y++)
+                    {
+                        Vector2Int check = toCreate[i] + new Vector2Int(x, y);
+                        if(_map[check].Type != Tile.TileType.Empty)
+                        {
+                            valid = false;
+                            break;
+                        }
+                    }
+                    if(!valid) break;
+                }
+                if(!valid) continue;
+
+                _map[toCreate[i]].PlaceTree();
+            }
+            for (int i = 0; i < toDelete.Count; i++)
+            {
+                _map[toDelete[i]].RemovePlaceable();
+            }
+            return;
         }
 
         private void GenerateStart()
         {
             Vector2Int playerCoords = PosToCoords(_player.position);
 
-            _map = new Dictionary<Vector2Int, WorldTile>();
+            _map = new Dictionary<Vector2Int, Tile>();
             for (int x = -_generationDist+1; x < _generationDist; x++)
             {
                 for (int y = -_generationDist+1; y < _generationDist; y++)
                 {
                     Vector2Int coords = playerCoords + new Vector2Int(x, y);
 
-                    if(x == 0) _map.Add(coords, new WorldTile(coords, WorldTile.TileType.Path, new Vector2Int[]{Vector2Int.up, Vector2Int.down}, _prng));
-                    else _map.Add(coords, new WorldTile(coords, WorldTile.TileType.Empty, new Vector2Int[0], _prng));
+                    if(x == 0) _map.Add(coords, new Tile(coords, Tile.TileType.Path, new Vector2Int[]{Vector2Int.up, Vector2Int.down}));
+                    else _map.Add(coords, new Tile(coords, Tile.TileType.Empty, new Vector2Int[0]));
                 }
             }
             _pathAngles.Add(0);
@@ -161,7 +198,7 @@ namespace Game
                 foreach (var dir in _map[theTile].ConnectionDirs)
                 {
                     if(!_map.ContainsKey(theTile+dir)) continue;
-                    if(_map[theTile+dir].Type == WorldTile.TileType.Path)
+                    if(_map[theTile+dir].Type == Tile.TileType.Path)
                     {
                         // Delete the path
                         _map[theTile].Delete();
@@ -212,7 +249,7 @@ namespace Game
                 }
 
                 // Make the new tile
-                _map[nextTile] = new WorldTile(nextTile, WorldTile.TileType.Path, new Vector2Int[]{-_lastPathDir[pathIdx],nextTileDir}, _prng);
+                _map[nextTile] = new Tile(nextTile, Tile.TileType.Path, new Vector2Int[]{-_lastPathDir[pathIdx],nextTileDir});
                 toCreate.Remove(nextTile);
 
                 // Update the path variables
@@ -255,7 +292,7 @@ namespace Game
 
         private Vector2Int PosToCoords(Vector3 pos)
         {
-            Vector2Int coords = new Vector2Int((int)(pos.x/WorldTile.TileWidth), (int)(pos.z/WorldTile.TileWidth));
+            Vector2Int coords = new Vector2Int((int)(pos.x/Tile.TileWidth), (int)(pos.z/Tile.TileWidth));
             coords += pos.x < 0 ? Vector2Int.left : Vector2Int.zero; 
             coords += pos.z < 0 ? Vector2Int.down : Vector2Int.zero; 
             return coords;
