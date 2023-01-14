@@ -553,6 +553,8 @@ MonoBehaviour:
   _player: {fileID: 1603597247}
   _generationDist: 16
   _treeDistFromPath: 2
+  _tSplitChanceIncrease: 1.1
+  _tSplitInitialChance: 0.0001
 --- !u!4 &1858692351
 Transform:
   m_ObjectHideFlags: 0

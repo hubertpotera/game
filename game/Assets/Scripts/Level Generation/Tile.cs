@@ -64,7 +64,7 @@ namespace Game
                     //   |    -root
                     
                     Vector2Int root = ConnectionDirs[0];
-                    if(Misc.RotateV2Int(ConnectionDirs[0], 1) == ConnectionDirs[1])
+                    if(Misc.RotateV2Int(root, 1) == ConnectionDirs[1])
                     {
                         root = ConnectionDirs[1];
                     }
@@ -73,6 +73,26 @@ namespace Game
                     if(root.y == 0) rotation += 90f;
                     if(root.y + root.x == 1) rotation += 180f;
                     return RandomTileFromList(PrefabStorage.TilePathTurn);
+                }
+                if (ConnectionDirs.Length == 3)
+                {
+                    bool leftFound= false;
+                    bool rightFound= false;
+                    bool downFound = false;
+                    bool upFound= false;
+                    foreach(var dir in ConnectionDirs)
+                    {
+                        if(dir.y == 1) upFound= true;
+                        else if(dir.y == -1) downFound= true;
+                        else if(dir.x == 1) rightFound= true;
+                        else if(dir.x == -1) leftFound= true;
+                    }
+                    rotation = 0f;
+                    if (!upFound) rotation = 0f;
+                    if (!rightFound) rotation = 90f;
+                    if (!downFound) rotation = 180f;
+                    if (!leftFound) rotation = 270f;
+                    return RandomTileFromList(PrefabStorage.TilePathT);
                 }
             }
 

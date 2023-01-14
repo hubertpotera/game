@@ -1,5 +1,7 @@
 using UnityEngine;
 using System.Collections.Generic;
+using Unity.VisualScripting;
+using UnityEngine.Analytics;
 
 namespace Game
 {
@@ -14,6 +16,13 @@ namespace Game
         private int _generationDist;
         [SerializeField]
         private int _treeDistFromPath;
+        [SerializeField]
+        [Range(1f, 10f)]
+        private float _tSplitChanceIncrease;
+        [SerializeField]
+        [Range(0f, 1f)]
+        private float _tSplitInitialChance;
+
 
         private Vector2Int _prevPlayerCoords = Vector2Int.zero;
 
@@ -21,7 +30,7 @@ namespace Game
         private List<float> _pathAngles;
         private List<Vector2Int> _lastPathTile;
         private List<Vector2Int> _lastPathDir;
-        
+        private float _tSplitChance;        
         
         #endregion
 
@@ -34,6 +43,7 @@ namespace Game
 
         private void Awake() 
         {
+            _tSplitChance = _tSplitInitialChance;
             _pathAngles = new List<float>();
             _lastPathTile = new List<Vector2Int>();
             _lastPathDir = new List<Vector2Int>();
@@ -96,6 +106,7 @@ namespace Game
             }
 
             // Update paths
+            Debug.Log("count" + _lastPathTile.Count);
             for(int i = 0; i < _lastPathTile.Count; i++)
             {
                 // Deleting and finding new last tiles
@@ -114,8 +125,24 @@ namespace Game
                 }
             }
 
+            // Merging merged paths
+            for (int i = 0; i < _lastPathTile.Count; i++)
+            {
+                for (int j = 0; j < _lastPathTile.Count; j++)
+                {
+                    if (i == j) continue;
+                    if (_lastPathTile[i] == _lastPathTile[j])
+                    {
+                        Debug.Log("removing");
+                        _pathAngles.RemoveAt(j);
+                        _lastPathTile.RemoveAt(j);
+                        _lastPathDir.RemoveAt(j);
+                    }
+                }
+            }
+
             // Finally, place and remove all tiles that weren't handlet yet
-            for(int i = 0; i < toDelete.Count; i++)
+            for (int i = 0; i < toDelete.Count; i++)
             {
                 _map[toDelete[i]].Delete();
                 _map.Remove(toDelete[i]);
@@ -195,6 +222,7 @@ namespace Game
             Vector2Int theTile = _lastPathTile[pathIdx];
             while (toDelete.Contains(theTile))
             {
+                bool found = false;
                 foreach (var dir in _map[theTile].ConnectionDirs)
                 {
                     if(!_map.ContainsKey(theTile+dir)) continue;
@@ -209,10 +237,23 @@ namespace Game
                         // Update path variables
                         _lastPathTile[pathIdx] = theTile;
                         _lastPathDir[pathIdx] = -dir;
+                        found= true;
                         break;
                     }
                 }
-                count++;
+                if(!found)
+                {
+                    _pathAngles.RemoveAt(pathIdx);
+                    _lastPathTile.RemoveAt(pathIdx);
+                    _lastPathDir.RemoveAt(pathIdx);
+
+                    _map[theTile].Delete();
+                    _map.Remove(theTile);
+                    toDelete.Remove(theTile);
+                    return;
+                }
+
+                count++; //TODO i think this isnt necesary now
                 if(count > 100)
                 {
                     Debug.LogError("Infinite Loop when finding lost path");
@@ -235,11 +276,44 @@ namespace Game
         {
             do
             {
-                // Add new tiles to the side, until the angle from player to tile excedes the path angle
                 float goingToPathAngle = -Vector2.SignedAngle(coordsChange, Quaternion.Euler(0f, 0f, -_pathAngles[pathIdx]) * Vector2.up);
+
+                // Decide if this tile should be a T Split
+                _tSplitChance *= _tSplitChanceIncrease;
+                if(Random.value < _tSplitChance)
+                {
+                    Debug.Log("Split");
+                    _tSplitChance = _tSplitInitialChance;
+
+                    // Continue path turning
+                    Vector2Int turn = Misc.RotateV2Int(coordsChange, Sign(goingToPathAngle));
+                    _map[nextTile] = new Tile(nextTile, Tile.TileType.Path, 
+                        new Vector2Int[] { -_lastPathDir[pathIdx], turn, coordsChange});
+                    toCreate.Remove(nextTile);
+                    float continueAngle = -Vector2.SignedAngle(Vector2.up, turn);
+                    _pathAngles[pathIdx] = continueAngle;
+                    _lastPathTile[pathIdx] = nextTile;
+                    _lastPathDir[pathIdx] = turn;
+
+                    //Create new path
+                    float splitAngle = -Vector2.SignedAngle(Vector2.up, coordsChange);
+                    _pathAngles.Add(splitAngle);
+                    _lastPathTile.Add(nextTile);
+                    _lastPathDir.Add(coordsChange);
+                    Debug.Log(coordsChange);
+                    Debug.Log(turn + " " + coordsChange);
+                    Debug.Log(continueAngle + " " + splitAngle);
+
+                    nextTile += turn;
+
+                    continue;
+                }
+
+
+                // Add new tiles to the side, until the angle from player to tile excedes the path angle
                 float goingToTileAngle = -Vector2.SignedAngle(coordsChange, nextTile-newCoords);
                 Vector2Int nextTileDir = Vector2Int.zero;
-                if(Mathf.Abs(goingToTileAngle) < Mathf.Abs(goingToPathAngle)) 
+                if(Mathf.Abs(goingToTileAngle) < Mathf.Abs(goingToPathAngle))
                 {
                     nextTileDir = Misc.RotateV2Int(coordsChange, Sign(goingToPathAngle));
                 }
