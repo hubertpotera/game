@@ -1,0 +1,183 @@
+using System.Collections.Generic;
+using System.Linq;
+using Unity.VisualScripting;
+using UnityEngine;
+
+namespace Game
+{
+    public class Path
+    {
+        public Vector2Int LastTile { get; private set; }
+        public Vector2Int LastDir { get; private set; }
+        public float Angle { get; private set; }
+
+        private float _pathEventChance;
+        private GameObject _pathEventPrefab;
+
+        public Path(Vector2Int lastTile, float angle, Vector2Int dir, WorldPrefabsSO worldPrefabs)
+        {
+            LastTile = lastTile;
+            Angle = angle;
+            LastDir = dir;
+
+            _pathEventChance = LevelGenerator.PATH_EVENT_INCREASE_PERCENTAGE;
+            
+            // Decide if the event should be a simple split or an Area
+            if(Random.value < 0.4f)
+            {
+                _pathEventPrefab = WorldPrefabsSO.RandomGOFromList(worldPrefabs.TilePathT);
+            }
+            else
+            {
+                _pathEventPrefab = WorldPrefabsSO.RandomGOFromList(worldPrefabs.Areas);
+            }
+        }
+
+        public void ContinuePath(Vector2Int coordsChange, int generationDist, List<Vector2Int> toCreate, WorldPrefabsSO worldPrefabs,
+            ref Dictionary<Vector2Int, IMapBlock> map, ref List<Path> paths, ref List<Area> areas)
+        {
+            Vector2Int nextTile = LastTile + LastDir;
+            Vector2Int root = Backtrack(generationDist / 2, map, out bool foo);
+
+            // Decide if this tile should be an event
+            _pathEventChance *= (1 + LevelGenerator.PATH_EVENT_INCREASE_PERCENTAGE);
+            if (Random.value < (_pathEventChance - LevelGenerator.PATH_EVENT_THRESHOLD))
+            {
+                bool farEnough = true;
+                foreach(Area area in areas) 
+                {
+                    if(Vector2.SqrMagnitude(area.Coords-root) < 4*generationDist*generationDist)
+                    {
+                        farEnough = false;
+                        break;
+                    }
+                }
+
+                if (farEnough)
+                {
+                    _pathEventChance = LevelGenerator.PATH_EVENT_INCREASE_PERCENTAGE;
+
+                    areas.Add(new Area(LastTile, LastDir, _pathEventPrefab, worldPrefabs, ref map, ref paths));
+                    paths.Remove(this);
+
+                    return;
+                }
+            }
+
+            while (toCreate.Contains(nextTile))
+            {
+                float goingToPathAngle = -Vector2.SignedAngle(coordsChange, Quaternion.Euler(0f, 0f, -Angle) * Vector2.up);
+
+                // Add new tiles to the side, until the angle from player to tile excedes the path angle
+                float goingToTileAngle = -Vector2.SignedAngle(coordsChange, nextTile - root);
+                Vector2Int nextTileDir = Vector2Int.zero;
+                if (Mathf.Abs(goingToTileAngle) < Mathf.Abs(goingToPathAngle))
+                {
+                    nextTileDir = Misc.RotateV2Int(coordsChange, Misc.Sign(goingToPathAngle));
+                }
+                else
+                {
+                    nextTileDir = coordsChange;
+                }
+
+                // Make the new tile
+                map[nextTile] = new Tile(nextTile, IMapBlock.BlockType.Path, new Vector2Int[] { -LastDir, nextTileDir }, worldPrefabs);
+
+                // Update the path variables
+                LastTile = nextTile;
+                LastDir = nextTileDir;
+
+                nextTile += nextTileDir;
+            }
+        }
+
+        public void TrimForgotenPath(Vector2Int playerPos, int generationRange, ref Dictionary<Vector2Int, IMapBlock> map, ref List<Path> paths)
+        {
+            while(LastTile.x <= (playerPos.x - generationRange) || LastTile.x >= (playerPos.x + generationRange) 
+                || LastTile.y <= (playerPos.y - generationRange) || LastTile.y >= (playerPos.y + generationRange))
+            {
+                Vector2Int newTile = Backtrack(1, map, out bool earlyEnd);
+
+                if (LastTile-newTile == Vector2Int.zero) 
+                {
+                    for(int i = 0; i < paths.Count; i++)
+                    {
+                        if (paths[i].LastTile == newTile)
+                        {
+                            paths.Remove(paths[i]);
+                            i--;
+                        }
+                    }
+                    break;
+                }
+                if (map[newTile].GetBlockType() != IMapBlock.BlockType.Path) break;
+
+                map[LastTile].Delete(ref map);  
+                map.Remove(LastTile);
+
+                LastDir = LastTile - newTile;
+                LastTile = newTile;
+            }
+        }
+
+        // <symmary> Find coords of a tile n times back, or until a t split </summary>
+        public Vector2Int Backtrack(int n, Dictionary<Vector2Int, IMapBlock> map, out bool earlyEnd)
+        {
+            earlyEnd= false;
+
+            if(map[LastTile].GetConnectionDirs().Length != 2)
+            {
+                earlyEnd = true;
+                return LastTile;
+            }
+
+            Vector2Int wentDir = map[LastTile].GetConnectionDirs()[0] == LastDir ? map[LastTile].GetConnectionDirs()[1] : map[LastTile].GetConnectionDirs()[0];
+            Vector2Int checkingTile = LastTile + wentDir; 
+            if (!map.ContainsKey(checkingTile))
+            {
+                return checkingTile - wentDir;
+            }
+
+            while (n > 1)
+            {
+                n--;
+
+                if (map[checkingTile].GetConnectionDirs().Length != 2)
+                {
+                    earlyEnd = true;
+                    return checkingTile;
+                }
+
+                wentDir = -wentDir == map[checkingTile].GetConnectionDirs()[0] ? map[checkingTile].GetConnectionDirs()[1] : map[checkingTile].GetConnectionDirs()[0];
+                checkingTile += wentDir;
+                if (!map.ContainsKey(checkingTile))
+                {
+                    return checkingTile - wentDir;
+                }
+            }
+
+            return checkingTile;
+        }
+
+        public float AngleFromBacktrack(int n, Dictionary<Vector2Int, IMapBlock> map)
+        {
+            Vector2Int backtrackedCoords = Backtrack(n, map, out _);
+            Vector2Int dif= LastTile - backtrackedCoords;
+            return -Vector2.SignedAngle(Vector2.up, dif);
+        }
+
+        public void UpdateAngle(List<Path> paths, Dictionary<Vector2Int, IMapBlock> map, int generationDist, float strength = 10f)
+        {
+            Angle = AngleFromBacktrack(generationDist / 2, map);
+            float repellForce = 0f;
+            foreach (var path in paths)
+            {
+                if (path == this) continue;
+                float dif = Mathf.DeltaAngle(Angle, path.Angle);
+                float forceT = 1-(Mathf.Abs(dif) / 180f);
+                repellForce += forceT*forceT* forceT * forceT * 30f * -Misc.Sign(dif);
+            }
+            Angle += strength * (2 * Mathf.PerlinNoise(0.01f * LastTile.x, 0.01f * LastTile.y) - 1) + repellForce;
+        }
+    }
+}

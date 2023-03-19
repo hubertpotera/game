@@ -7,9 +7,18 @@ namespace Game
         /// <summary>1 for right, -1 for left</summary>
         public static Vector2Int RotateV2Int(Vector2Int v, int dir)
         {
-            dir = Mathf.Clamp(dir, -1, 1);
-            if(v.x == 0)    return new Vector2Int(dir*v.y, 0);
-            else            return new Vector2Int(0, dir*-v.x);
+            if (dir == 1)       return new Vector2Int(v.y, -v.x);
+            else if (dir == -1) return new Vector2Int(-v.y, v.x);
+            else
+            {
+                Debug.LogError("wrong dir value mate");
+                return v;
+            }
+        }
+
+        public static int Sign(float x)
+        {
+            return (x < 0f) ? -1 : 1;
         }
     }
 }

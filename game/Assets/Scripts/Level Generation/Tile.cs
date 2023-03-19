@@ -3,59 +3,60 @@ using System.Collections.Generic;
 
 namespace Game
 {
-    public class Tile
+    public class Tile : IMapBlock
     {
-        public const float TileWidth = 1.5f;
+        public const float TILE_WIDTH = 2f;
 
-        public readonly Vector2Int Coords;
-        public readonly TileType Type;
-        public readonly Vector2Int[] ConnectionDirs;
+        private Vector2Int _coords;
+        private IMapBlock.BlockType _blockType;
+        private Vector2Int[] _connectionDirs;
         
-        public readonly GameObject Go;
+        private GameObject _go;
         private Placeable _placeable;
 
-        public enum TileType
-        {
-            Empty,
-            Path
-        }
+        public Vector2Int[] GetConnectionDirs() => _connectionDirs;
+        public IMapBlock.BlockType GetBlockType() => _blockType;
 
-        public Tile(Vector2Int coords, TileType tileType, Vector2Int[] connectionDirs)
+
+
+        public Tile(Vector2Int coords, IMapBlock.BlockType tileType, Vector2Int[] connectionDirs, WorldPrefabsSO worldPrefabs)
         {
-            Coords = coords;
-            ConnectionDirs = connectionDirs;
-            Type = tileType;
+            _coords = coords;
+            _connectionDirs = connectionDirs;
+            _blockType = tileType;
             
-            Go = GameObject.Instantiate(DecideTile(tileType, out float rotation));
+            _go = GameObject.Instantiate(DecideTile(tileType, out float rotation, worldPrefabs));
 
-            Transform transform = Go.transform;
+            Transform transform = _go.transform;
             transform.Rotate(0f, rotation, 0f, Space.World);
-            transform.position = TileWidth * (new Vector3(Coords.x, 0f, Coords.y) + new Vector3(0.5f, 0f, 0.5f));
-            transform.localScale = TileWidth * Vector3.one;
-            Go.name = coords.ToString();
+            transform.position = TILE_WIDTH * (new Vector3(_coords.x, 0f, _coords.y) + new Vector3(0.5f, 0f, 0.5f));
+            transform.localScale = TILE_WIDTH * Vector3.one;
+            _go.name = coords.ToString();
         }
 
-        private GameObject DecideTile(TileType tileType, out float rotation)
+
+
+        private GameObject DecideTile(IMapBlock.BlockType tileType, out float rotation, WorldPrefabsSO worldPrefabs)
         {
-            if(tileType == TileType.Empty)
+            if(tileType == IMapBlock.BlockType.Empty)
             {
                 rotation = 90f*Random.Range(0,4);
-                return RandomTileFromList(PrefabStorage.TileEmpty);
+                return WorldPrefabsSO.RandomGOFromList(worldPrefabs.TileEmpty);
             }
-            if(tileType == TileType.Path)
+            if(tileType == IMapBlock.BlockType.Path)
             {
-                if(ConnectionDirs.Length == 2 && ConnectionDirs[0] == -ConnectionDirs[1])
+                if(_connectionDirs.Length == 2 && _connectionDirs[0] == -_connectionDirs[1])
                 {
                     // Straight
-                    if(ConnectionDirs[0] == Vector2Int.up || ConnectionDirs[1] == Vector2Int.up)
+                    if(_connectionDirs[0] == Vector2Int.up || _connectionDirs[1] == Vector2Int.up)
                         rotation = 0f;
                     else
                         rotation = 90f;
                     rotation += 180f*Random.Range(0,2);
-                    
-                    return RandomTileFromList(PrefabStorage.TilePathStraight);
+
+                    return WorldPrefabsSO.RandomGOFromList(worldPrefabs.TilePathStraight);
                 }
-                if(ConnectionDirs.Length == 2)
+                if(_connectionDirs.Length == 2)
                 {
                     // Turn
 
@@ -63,24 +64,24 @@ namespace Game
                     //   #--
                     //   |    -root
                     
-                    Vector2Int root = ConnectionDirs[0];
-                    if(Misc.RotateV2Int(root, 1) == ConnectionDirs[1])
+                    Vector2Int root = _connectionDirs[0];
+                    if(Misc.RotateV2Int(root, 1) == _connectionDirs[1])
                     {
-                        root = ConnectionDirs[1];
+                        root = _connectionDirs[1];
                     }
 
                     rotation = 0f;
                     if(root.y == 0) rotation += 90f;
                     if(root.y + root.x == 1) rotation += 180f;
-                    return RandomTileFromList(PrefabStorage.TilePathTurn);
+                    return WorldPrefabsSO.RandomGOFromList(worldPrefabs.TilePathTurn);
                 }
-                if (ConnectionDirs.Length == 3)
+                if (_connectionDirs.Length == 3)
                 {
                     bool leftFound= false;
                     bool rightFound= false;
                     bool downFound = false;
                     bool upFound= false;
-                    foreach(var dir in ConnectionDirs)
+                    foreach(var dir in _connectionDirs)
                     {
                         if(dir.y == 1) upFound= true;
                         else if(dir.y == -1) downFound= true;
@@ -92,18 +93,18 @@ namespace Game
                     if (!rightFound) rotation = 90f;
                     if (!downFound) rotation = 180f;
                     if (!leftFound) rotation = 270f;
-                    return RandomTileFromList(PrefabStorage.TilePathT);
+                    return WorldPrefabsSO.RandomGOFromList(worldPrefabs.TilePathT);
                 }
             }
 
             Debug.LogError("Couldn't find viable tile");
             rotation = 0;
-            return PrefabStorage.TileEmpty[0];
+            return worldPrefabs.TileEmpty[0];
         }
         
-        public void PlaceTree()
+        public void PlaceTree(WorldPrefabsSO worldPrefabs)
         {
-            _placeable = new Placeable(this, PrefabStorage.PlaceableTree[0], 45, .5f);
+            _placeable = new Placeable(_go.transform, WorldPrefabsSO.RandomGOFromList(worldPrefabs.PlaceableTree), 30, .3f);
         }
         
         public void RemovePlaceable()
@@ -112,15 +113,11 @@ namespace Game
                 _placeable.Delete();
         }
 
-        private static GameObject RandomTileFromList(List<GameObject> list)
-        {
-            return list[Random.Range(0,list.Count)];
-        }
-
-        public void Delete()
+        public void Delete(ref Dictionary<Vector2Int, IMapBlock> map)
         {
             RemovePlaceable();
-            Object.Destroy(Go);
+            map.Remove(_coords);
+            Object.Destroy(_go);
         }
     }
 }
