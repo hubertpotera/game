@@ -1,0 +1,51 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9d55a8c5b27767048a356c37c55ef77e, type: 3}
+  m_Name: CombatAudio
+  m_EditorClassIdentifier: 
+  Windup:
+  - {fileID: 8300000, guid: ebf00ab1907dc0543b2292b4fac8b4fe, type: 3}
+  - {fileID: 8300000, guid: da1df4dfdee3d5d4180d310abf7a5cd4, type: 3}
+  Swing:
+  - {fileID: 8300000, guid: 9149dc47ee3c33749bd5676dccdb24c2, type: 3}
+  - {fileID: 8300000, guid: da208ba568f4dfa4a94a944e4a96d44e, type: 3}
+  - {fileID: 8300000, guid: 3bf0e04a8d5f83c4a92c3f0f7de5d019, type: 3}
+  - {fileID: 8300000, guid: 3ee9f619e1885b741b9b22ad8e2f7205, type: 3}
+  - {fileID: 8300000, guid: a1356a43950e5a84fb8c681a39655528, type: 3}
+  - {fileID: 8300000, guid: 415e9ed292220de48b8388d1896d202e, type: 3}
+  - {fileID: 8300000, guid: a300a092412b09e42999545631417a79, type: 3}
+  - {fileID: 8300000, guid: eade82f16cc87fd4aa10504e8428f62b, type: 3}
+  - {fileID: 8300000, guid: a20790db8faab234bb28742aaf023182, type: 3}
+  Hit:
+  - {fileID: 8300000, guid: 8d488fda9e5b5474eac76e560a311340, type: 3}
+  - {fileID: 8300000, guid: 8a15d7c1a67da7c4fad94f6ec392a9d9, type: 3}
+  - {fileID: 8300000, guid: 635714ef8d86c2f47b0cdcd27ea4a98e, type: 3}
+  - {fileID: 8300000, guid: 16143b8be7b01484e8bee6745d5ef1c6, type: 3}
+  - {fileID: 8300000, guid: cb1384327e46c934fbc6a5ef4a6d250e, type: 3}
+  - {fileID: 8300000, guid: d5eb78422c482fe4cb6bd6c1b3b9129e, type: 3}
+  - {fileID: 8300000, guid: 6449617698d1a934a8a495b45921565a, type: 3}
+  - {fileID: 8300000, guid: 2df9698eaaf2dc9428216090d9aa2dd3, type: 3}
+  Parry:
+  - {fileID: 8300000, guid: 598a10f1c2ce7e744b607dc92ee2e77c, type: 3}
+  - {fileID: 8300000, guid: e70b58bb8fb50754eb698a2fa32ab471, type: 3}
+  - {fileID: 8300000, guid: f9f3fc92d78ee9c4eafce8177dc111da, type: 3}
+  - {fileID: 8300000, guid: ce8459953886fc04baf2121c41307cbe, type: 3}
+  - {fileID: 8300000, guid: 4b20f27b2ec106a45b46e1aa97c28f05, type: 3}
+  - {fileID: 8300000, guid: 9112b63b5c8b34148b4fe819b3279e62, type: 3}
+  - {fileID: 8300000, guid: b4f56871e0fea8b4e804aba61c5ba72d, type: 3}
+  - {fileID: 8300000, guid: c024c329a7d56d247b6f1e366862537a, type: 3}
+  BowDraw:
+  - {fileID: 8300000, guid: 3058f887b45637b47a492ed13adc18dd, type: 3}
+  BowRelease:
+  - {fileID: 8300000, guid: d32f753c4848bc140956095f8e3ef413, type: 3}
+  BowHit:
+  - {fileID: 8300000, guid: 38cab5015488bef46ab0cb8cac7bbec7, type: 3}

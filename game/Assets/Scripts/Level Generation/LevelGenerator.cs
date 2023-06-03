@@ -32,6 +32,7 @@ namespace Game
 
         private void Awake() 
         {
+            _prefabs = Resources.Load<WorldPrefabsSO>("WorldPrefabs");
             _paths= new List<Path>();
             _areas= new List<Area>();
             GenerateStart();

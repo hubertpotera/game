@@ -1,4 +1,5 @@
 using UnityEngine;
+using System;
 
 namespace Game
 {
@@ -19,6 +20,16 @@ namespace Game
         public static int Sign(float x)
         {
             return (x < 0f) ? -1 : 1;
+        }
+
+        public static string BytesToString(byte[] bytes)
+        {
+            return Convert.ToBase64String(bytes);
+        }
+        
+        public static byte[] StringToBytes(string str)
+        {
+            return Convert.FromBase64String(str);
         }
     }
 }
