@@ -4,6 +4,7 @@ using UnityEngine;
 
 namespace Game
 {
+    [DefaultExecutionOrder(-5)]
     public class FellaVisuals : MonoBehaviour
     {
         public MeshRenderer LadRenderer;
@@ -81,19 +82,24 @@ namespace Game
 
         private void CrateAndSetArmorDisplays()
         {
-            _head1Material = CreateArmorDisplay(.03f, "head1");
-            _head2Material = CreateArmorDisplay(.04f, "head2");
-            _body1Material = CreateArmorDisplay(.01f, "body1");
-            _body2Material = CreateArmorDisplay(.02f, "body2");
+            _head1Material = CreateArmorDisplay(.03f, "head1", out GameObject go1);
+            _head2Material = CreateArmorDisplay(.04f, "head2", out GameObject go2);
+            _body1Material = CreateArmorDisplay(.01f, "body1", out GameObject go3);
+            _body2Material = CreateArmorDisplay(.02f, "body2", out GameObject go4);
+            go1.transform.parent = LadRenderer.transform;
+            go2.transform.parent = LadRenderer.transform;
+            go3.transform.parent = LadRenderer.transform;
+            go4.transform.parent = LadRenderer.transform;
             UpdateDisplays();
             return;
         }
 
-        private Material CreateArmorDisplay(float height, string name)
+        private Material CreateArmorDisplay(float height, string name, out GameObject createdDisplay)
         {
-            GameObject display = Instantiate(LadRenderer.gameObject, LadRenderer.transform.position + Vector3.up * height, Quaternion.Euler(90f, 0f, 0f), transform);
-            display.name = name;
-            Material mat = display.GetComponent<MeshRenderer>().material;
+            createdDisplay = Instantiate(LadRenderer.gameObject, LadRenderer.transform.position + Vector3.up * height, Quaternion.Euler(90f, 0f, 0f), transform);
+            createdDisplay.name = name;
+            Material mat = createdDisplay.GetComponent<MeshRenderer>().material;
+
             return mat;
         }
     }

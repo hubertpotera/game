@@ -19,9 +19,9 @@ MonoBehaviour:
   TilePathTurn:
   - {fileID: 1965783796778736456, guid: c4e24b56da86ef746964a6f48d31fd11, type: 3}
   PlaceableTree:
-  - {fileID: 1930799735831677354, guid: 387bb7f68008b0644b4a61064f619207, type: 3}
   - {fileID: 2842166566454041187, guid: f94cdd6d303b8c44a8e1d9918e150f7c, type: 3}
   TilePathT:
   - {fileID: 7189724107612048401, guid: 8a75e5f4fcfffce468028bec92573022, type: 3}
   Areas:
   - {fileID: 5106177644308475264, guid: ed979b08c7b38b24da54801b58216718, type: 3}
+  - {fileID: 135517133791558035, guid: 74a83f511e50dd74abf20451b3bb3056, type: 3}

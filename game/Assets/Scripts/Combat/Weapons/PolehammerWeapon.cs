@@ -14,13 +14,11 @@ namespace Game
                 {
                     if(Targets[i].TakeAHit(_holder, Mathf.CeilToInt(ItemStats.BaseDamage * DamageMod), 0.2f))
                     {
-                        _holder.GainExpertice(5);
-                        _audioSource.PlayOneShot(_audio.Choose(_audio.Hit));
+                        SoundManager.Instance.PlayEffect(SoundManager.Choose(SoundManager.Instance.CombatAudio.Hit), transform.position);
                     }
                 }
                 if (Targets[i].Health <= 0)
                 {
-                    _holder.GainExpertice(10);
                     Targets.Remove(Targets[i]);
                     i--;
                 }

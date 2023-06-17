@@ -69,13 +69,13 @@ namespace Game
         {
             // Charge
             _animator.SetTrigger("attack");
-            _audioSource.PlayOneShot(_audio.Choose(_audio.Windup));
+            SoundManager.Instance.PlayEffect(SoundManager.Choose(SoundManager.Instance.CombatAudio.Windup), transform.position);
             _damageArea.material.color = new Color(1f, 1f, 1f, 0.3f);
             yield return new WaitForSeconds(WindupTime);
 
             // Swing
             _damageArea.material.color = new Color(1f, 1f, 1f, 1.0f);
-            _audioSource.PlayOneShot(_audio.Choose(_audio.Swing));
+            SoundManager.Instance.PlayEffect(SoundManager.Choose(SoundManager.Instance.CombatAudio.Swing), transform.position);
             Parriable = true;
             yield return new WaitForSeconds(SwingTime);
 

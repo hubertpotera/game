@@ -27,30 +27,30 @@ namespace Game
             Inventory.Arrows = 10000; //TEMP 
 
             UpdateInventory();
-            SaveData.Save();
         }
 
         public void UpdateInventory()
         {
-            InventoryProgressionSO invProg = Resources.Load<InventoryProgressionSO>("InventoryProgression"); 
-            if(SaveData.Progress.Head1Level >= 0)
-                Inventory.Head1 = invProg.Head1Upgrades[SaveData.Progress.Head1Level].Item;
-            if(SaveData.Progress.Head2Level >= 0)
-                Inventory.Head2 = invProg.Head2Upgrades[SaveData.Progress.Head2Level].Item;
-            if(SaveData.Progress.Body1Level >= 0)
-                Inventory.Body1 = invProg.Body1Upgrades[SaveData.Progress.Body1Level].Item;
-            if(SaveData.Progress.Body2Level >= 0)
-                Inventory.Body2 = invProg.Body2Upgrades[SaveData.Progress.Body2Level].Item;
-            Visuals.UpdateDisplays();
-            // TODO
-            // _inventory.InHands = InHands;
-            // _inventory.OnSide = OnSide;
+            InventoryProgressionSO invProg = Resources.Load<InventoryProgressionSO>("InventoryProgression");
+            if(RunManager.Instance.Head1Level >= 0)
+                Inventory.Head1 = invProg.Head1Upgrades[RunManager.Instance.Head1Level].Item;
+            if(RunManager.Instance.Head2Level >= 0)
+                Inventory.Head2 = invProg.Head2Upgrades[RunManager.Instance.Head2Level].Item;
+            if(RunManager.Instance.Body1Level >= 0)
+                Inventory.Body1 = invProg.Body1Upgrades[RunManager.Instance.Body1Level].Item;
+            if(RunManager.Instance.Body2Level >= 0)
+                Inventory.Body2 = invProg.Body2Upgrades[RunManager.Instance.Body2Level].Item;
+            Visuals.Invoke("UpdateDisplays", 0);    // Invoking because in build the inventory would be null at start
         }
 
 
         protected override void Decide()
         {
-            if(BlockInputs) return;
+            if(BlockInputs) 
+            {
+                MovementDir = Vector3.zero;
+                return;
+            }
 
             MovementDir = new Vector3(Input.GetAxisRaw("Horizontal"), 0f, Input.GetAxisRaw("Vertical"));
 
@@ -84,7 +84,7 @@ namespace Game
 
         protected override void Killed(CombatFella killedOne)
         {
-            SaveData.Progress.AddKilled(killedOne);
+            RunManager.Instance.AddKilled(killedOne);
         }
 
         protected override void Die()
@@ -96,7 +96,7 @@ namespace Game
         protected override void Dash(Vector3 dir)
         {
             base.Dash(dir);
-            if(SaveData.Progress.UsingDashInvulnerability)
+            if(RunManager.Instance.UsingDashInvulnerability)
             {
                 StartInvulnerability(0.3f);
             }
@@ -105,7 +105,7 @@ namespace Game
         protected override void SuccessfulParry()
         {
             base.SuccessfulParry();
-            if(SaveData.Progress.UsingRiposte)
+            if(RunManager.Instance.UsingRiposte)
             {
                 StartCoroutine(Inventory.Weapon.BoostNextAttackCoroutine(0.5f, 0.2f));
             }
@@ -114,7 +114,7 @@ namespace Game
         public override void ChangeHealth(int change)
         {
             base.ChangeHealth(change);
-            if(SaveData.Progress.UsingBloodRage)
+            if(RunManager.Instance.UsingBloodRage)
             {
                 Inventory.Weapon.DamageMod = 1.5f - 0.5f*Health/MaxHealth;
             }
@@ -122,7 +122,7 @@ namespace Game
 
         protected override void Attack()
         {
-            if(SaveData.Progress.UsingRampage)
+            if(RunManager.Instance.UsingRampage)
             {
                 if(Time.time - _lastAttackTime < 1.2f*(Inventory.Weapon.SwingTime+Inventory.Weapon.WindupTime+Inventory.Weapon.AttackRecoveryTime))
                 {

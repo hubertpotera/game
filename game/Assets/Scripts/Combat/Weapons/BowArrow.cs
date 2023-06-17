@@ -12,7 +12,6 @@ namespace Game
         public CombatFella Holder;
         public Vector3 Direction;
         public ItemWeaponSO WeaponStats;
-        public CombatAudioSO Audio;
 
         private float _shootTimeStart;
         private float _travelTime = 2f;
@@ -45,9 +44,11 @@ namespace Game
                     CombatFella hitFella = hit.collider.gameObject.GetComponent<CombatFella>();
                     if (hitFella != null)
                     {
-                        hitFella.GetComponent<AudioSource>().PlayOneShot(Audio.Choose(Audio.BowHit));
+                        SoundManager.Instance.PlayEffect(SoundManager.Choose(SoundManager.Instance.CombatAudio.BowHit), transform.position);
                         transform.SetParent(hit.transform, true);
-                        hitFella.TakeAHit(Holder, WeaponStats.BaseDamage);
+                        float damage = WeaponStats.BaseDamage;
+                        damage += 0.2f*((int)WeaponStats.WeaponQuality-2) * damage;
+                        hitFella.TakeAHit(Holder, damage);
                     }
                     else
                     {

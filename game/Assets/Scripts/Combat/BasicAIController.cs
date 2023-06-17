@@ -26,7 +26,7 @@ namespace Game
 
         private Coroutine _actionBlockCoroutine;
 
-        private FightStance _stance = FightStance.Defensive;
+        private FightStance _stance = FightStance.Idle;
 
         private LayerMask _terrainLayer;
 
@@ -68,6 +68,16 @@ namespace Game
             float toPlayerDist = toPlayer.magnitude;
             Vector3 toPlayerDir = toPlayer.normalized;
             _speedModifier = 1f;
+
+            if(_stance == FightStance.Idle)
+            {
+                if(toPlayerDist < 5)
+                {
+                    _stance = FightStance.Defensive;
+                    CallOthersToAttack();
+                }
+                return;
+            }
 
             // Movement ---------------------------------------------------------
             // Set desired distance from player 
@@ -263,6 +273,12 @@ namespace Game
 
         public IEnumerator CalledToAttack()
         {
+            if(_stance == FightStance.Idle)
+            {
+                _stance = FightStance.Defensive;
+                yield break;
+            }
+
             if(BowEquipped) 
                 yield break;
             _timeSinceAttack = 0f;

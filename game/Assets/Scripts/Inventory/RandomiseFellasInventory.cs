@@ -13,6 +13,14 @@ namespace Game
             public ItemSO Item;
             public int Weight;
         }
+
+        [SerializeField]
+        private int _minWeaponQuality=1;
+        [SerializeField]
+        private int _maxWeaponQuality=3;
+        [SerializeField]
+        private List<ItemWeaponSO.Effect> _effects;
+        [Space]
         
         [SerializeField]
         private List<Choice> _mainWeaponChoices = new List<Choice>();
@@ -33,8 +41,14 @@ namespace Game
         {
             Inventory inventory = GetComponent<Inventory>();
             
-            inventory.InHands = (ItemWeaponSO)Choose(_mainWeaponChoices);
-            inventory.OnSide = (ItemWeaponSO)Choose(_secondaryWeaponChoices);
+            inventory.InHands = Instantiate((ItemWeaponSO)Choose(_mainWeaponChoices));
+            inventory.InHands.WeaponQuality = (ItemWeaponSO.Quality)Random.Range(_minWeaponQuality,_maxWeaponQuality);
+            inventory.InHands.WeaponEffect = (ItemWeaponSO.Effect)_effects[Random.Range(0,_effects.Count)];
+
+            inventory.OnSide = Instantiate((ItemWeaponSO)Choose(_secondaryWeaponChoices));
+            inventory.OnSide.WeaponQuality = (ItemWeaponSO.Quality)Random.Range(_minWeaponQuality,_maxWeaponQuality);
+            inventory.OnSide.WeaponEffect = (ItemWeaponSO.Effect)_effects[Random.Range(0,_effects.Count)];
+
             inventory.Head1 = (ItemArmorSO)Choose(_head1Choices);
             inventory.Head2 = (ItemArmorSO)Choose(_head2Choices);
             inventory.Body1 = (ItemArmorSO)Choose(_body1Choices);

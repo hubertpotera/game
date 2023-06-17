@@ -36,13 +36,15 @@ namespace Game
 
         public void SwapWeapons()
         {
+            if(InHands == null || OnSide == null) return;
+            
             ItemWeaponSO old = InHands;
             InHands = OnSide;
             OnSide = old;
             EquipWeapon(InHands);
         }
 
-        private void EquipWeapon(ItemWeaponSO weapon)
+        public void EquipWeapon(ItemWeaponSO weapon)
         {
             if(weapon == null)
             {

@@ -16,20 +16,9 @@ namespace Game
             Player, Test
         }
 
-
         public int Health { get; private set; }
         [Space]
         public int MaxHealth = 10;
-
-        private int _combatExpertice;
-        public int GetCombatLevel()
-        {
-            if(_combatExpertice > 50) return 1;
-            if(_combatExpertice > 150) return 2;
-            if(_combatExpertice > 300) return 3;
-            if(_combatExpertice > 500) return 4;
-            return 0;
-        }
 
         [Header("Movement")]
         public float Speed = 3f;
@@ -41,6 +30,7 @@ namespace Game
         public FellaVisuals Visuals { get; protected set; }
         public bool BowEquipped => Inventory.InHands.ThreatRange > 5;
         protected CharacterController _characterController;
+        private Animator _animator;
 
         public Vector3 MovementDir { get; protected set; }
         protected Vector3 _additionalVelocities;
@@ -78,6 +68,7 @@ namespace Game
             _characterController = GetComponent<CharacterController>();
             Inventory = GetComponent<Inventory>();
             Visuals = GetComponent<FellaVisuals>();
+            _animator = GetComponent<Animator>();
 
             AdditionalAwake();
         }
@@ -108,7 +99,10 @@ namespace Game
             _speedModifier = Mathf.Clamp01(_speedModifier);
             _temporarySlow = Mathf.Lerp(Mathf.Clamp01(_temporarySlow), 0f, KnockbackRecovery * 0.5f * Time.deltaTime);
             float anotherModifier = 1f;
-            _characterController.Move((Speed * _speedModifier * (1-_temporarySlow) * anotherModifier * _movementNow + _additionalVelocities) * Time.deltaTime);
+            Vector3 finalMovement = Speed * _speedModifier * (1-_temporarySlow) * anotherModifier * _movementNow + _additionalVelocities;
+            _characterController.Move(finalMovement * Time.deltaTime);
+
+            _animator.SetBool("Walking", finalMovement.sqrMagnitude > 0.1);
         }
 
         protected void CombatActions()
@@ -198,7 +192,7 @@ namespace Game
             Visuals.UpdateBlood(Health,MaxHealth);
         }
 
-        public bool TakeAHit(CombatFella attacker, int damage, float armourEffectiveness = 1f)
+        public bool TakeAHit(CombatFella attacker, float damage, float armourEffectiveness = 1f)
         {
             if(_invoulnerable) return false;
 
@@ -206,7 +200,7 @@ namespace Game
 
             damageModifier *= 1 - armourEffectiveness * Mathf.Sqrt(Inventory.GetArmor()/30f);
 
-            ChangeHealth(-Mathf.Max(1, Mathf.FloorToInt(damage * damageModifier))); // i dont know if min 1 is a good solution
+            ChangeHealth(-Mathf.CeilToInt(damage * damageModifier));
 
             Vector3 dir = (transform.position - attacker.transform.position).normalized;
 
@@ -223,12 +217,6 @@ namespace Game
                 Die();
             }
             return true;
-        }
-
-        public void GainExpertice(int ammount)
-        {
-            _combatExpertice += ammount;
-            Inventory.Weapon.UpdateParameters();
         }
 
         public virtual bool GetParried()

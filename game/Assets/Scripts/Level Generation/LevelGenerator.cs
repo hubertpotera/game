@@ -6,9 +6,6 @@ namespace Game
 {
     public class LevelGenerator : MonoBehaviour
     {
-        public const float PATH_EVENT_INCREASE_PERCENTAGE = 0.05f;
-        public const float PATH_EVENT_THRESHOLD = 0.2f;
-
         [SerializeField]
         private WorldPrefabsSO _prefabs;
 
@@ -100,7 +97,7 @@ namespace Game
             {
                 _paths[i].UpdateAngle(_paths, _map, _generationDist, _pathNudge);
                 if (!toCreate.Contains(_paths[i].LastTile + _paths[i].LastDir)) continue;
-                _paths[i].ContinuePath(coordsChange, _generationDist, toCreate, _prefabs, ref _map, ref _paths, ref _areas);
+                _paths[i].ContinuePath(coordsChange, _generationDist, toCreate, _prefabs, ref _map, ref _paths, ref _areas, transform);
             }
 
             // Forgeting not seen paths
@@ -112,14 +109,15 @@ namespace Game
             // Forgeting areas
             for (int i = 0; i < _areas.Count; i++)
             {
-                _areas[i].ConciderDeletion(newCoords, coordsChange, _generationDist, ref _paths, ref _map, _prefabs);
+                if(_areas[i].ConciderDeletion(newCoords, coordsChange, _generationDist, ref _paths, ref _map, _prefabs))
+                    _areas.RemoveAt(i);
             }
 
             // Fill the rest with empty tiles
             for (int i = 0; i < toCreate.Count; i++)
             {
                 if (_map.ContainsKey(toCreate[i])) continue;
-                _map[toCreate[i]] = (IMapBlock) new Tile(toCreate[i], IMapBlock.BlockType.Empty, new Vector2Int[0], _prefabs);
+                _map[toCreate[i]] = (IMapBlock) new Tile(toCreate[i], IMapBlock.BlockType.Empty, new Vector2Int[0], _prefabs, transform);
             }
 
             PlaceTrees(coordsChange, newCoords);
@@ -177,8 +175,8 @@ namespace Game
                 {
                     Vector2Int coords = playerCoords + new Vector2Int(x, y);
 
-                    if (x == 0) _map.Add(coords, new Tile(coords, IMapBlock.BlockType.Path, new Vector2Int[] { Vector2Int.up, Vector2Int.down }, _prefabs));
-                    else _map.Add(coords, new Tile(coords, IMapBlock.BlockType.Empty, new Vector2Int[0], _prefabs));
+                    if (x == 0) _map.Add(coords, new Tile(coords, IMapBlock.BlockType.Path, new Vector2Int[] { Vector2Int.up, Vector2Int.down }, _prefabs, transform));
+                    else _map.Add(coords, new Tile(coords, IMapBlock.BlockType.Empty, new Vector2Int[0], _prefabs, transform));
                 }
             }
             //_paths.Add(new Path(new Vector2Int(0, _generationDist - 1), 0, Vector2Int.up, true, _prefabs));

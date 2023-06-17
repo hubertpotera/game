@@ -11,7 +11,6 @@ namespace Game
         public Vector2Int LastDir { get; private set; }
         public float Angle { get; private set; }
 
-        private float _pathEventChance;
         private GameObject _pathEventPrefab;
 
         public Path(Vector2Int lastTile, float angle, Vector2Int dir, WorldPrefabsSO worldPrefabs)
@@ -19,8 +18,6 @@ namespace Game
             LastTile = lastTile;
             Angle = angle;
             LastDir = dir;
-
-            _pathEventChance = LevelGenerator.PATH_EVENT_INCREASE_PERCENTAGE;
             
             // Decide if the event should be a simple split or an Area
             if(Random.value < 0.4f)
@@ -34,34 +31,18 @@ namespace Game
         }
 
         public void ContinuePath(Vector2Int coordsChange, int generationDist, List<Vector2Int> toCreate, WorldPrefabsSO worldPrefabs,
-            ref Dictionary<Vector2Int, IMapBlock> map, ref List<Path> paths, ref List<Area> areas)
+            ref Dictionary<Vector2Int, IMapBlock> map, ref List<Path> paths, ref List<Area> areas, Transform parent)
         {
             Vector2Int nextTile = LastTile + LastDir;
             Vector2Int root = Backtrack(generationDist / 2, map, out bool foo);
 
             // Decide if this tile should be an event
-            _pathEventChance *= (1 + LevelGenerator.PATH_EVENT_INCREASE_PERCENTAGE);
-            if (Random.value < (_pathEventChance - LevelGenerator.PATH_EVENT_THRESHOLD))
+            if (areas.Count() == 0)
             {
-                bool farEnough = true;
-                foreach(Area area in areas) 
-                {
-                    if(Vector2.SqrMagnitude(area.Coords-root) < 4*generationDist*generationDist)
-                    {
-                        farEnough = false;
-                        break;
-                    }
-                }
+                areas.Add(new Area(LastTile, LastDir, _pathEventPrefab, worldPrefabs, ref map, ref paths, parent));
+                paths.Remove(this);
 
-                if (farEnough)
-                {
-                    _pathEventChance = LevelGenerator.PATH_EVENT_INCREASE_PERCENTAGE;
-
-                    areas.Add(new Area(LastTile, LastDir, _pathEventPrefab, worldPrefabs, ref map, ref paths));
-                    paths.Remove(this);
-
-                    return;
-                }
+                return;
             }
 
             while (toCreate.Contains(nextTile))
@@ -81,7 +62,7 @@ namespace Game
                 }
 
                 // Make the new tile
-                map[nextTile] = new Tile(nextTile, IMapBlock.BlockType.Path, new Vector2Int[] { -LastDir, nextTileDir }, worldPrefabs);
+                map[nextTile] = new Tile(nextTile, IMapBlock.BlockType.Path, new Vector2Int[] { -LastDir, nextTileDir }, worldPrefabs, parent);
 
                 // Update the path variables
                 LastTile = nextTile;

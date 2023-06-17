@@ -24,9 +24,7 @@ namespace Game
         private float _attackLenMod = 1;
         public float DamageMod = 1;
         
-        protected CombatAudioSO _audio;
         protected Animator _animator;
-        protected AudioSource _audioSource;
         protected CombatFella _holder;
 
 
@@ -34,8 +32,6 @@ namespace Game
         {
             _holder = transform.parent.GetComponent<CombatFella>();
             _animator = GetComponent<Animator>();
-            _audioSource = _holder.GetComponent<AudioSource>();
-            _audio = Resources.Load<CombatAudioSO>("CombatAudio");
             StartCoroutine(UpdateParametersNextFrame());
             
             AdditionalAwake();
@@ -49,8 +45,7 @@ namespace Game
 
         public void UpdateParameters(float additionalAttackLenMod = 1f)
         {
-            int level = _holder.GetCombatLevel();
-            _attackLenMod = (1f - 0.1f*2*Mathf.Sqrt(level)) * additionalAttackLenMod;
+            _attackLenMod = (1f - 0.1f*2*Mathf.Sqrt((int)ItemStats.WeaponQuality)) * additionalAttackLenMod;
             
             _animator.SetFloat("windupLen", 1f/(WindupTime));
             _animator.SetFloat("swingLen", 1f/(SwingTime));
@@ -80,7 +75,7 @@ namespace Game
         {
             if (Parriable)
             {
-                _audioSource.PlayOneShot(_audio.Choose(_audio.Parry));
+                SoundManager.Instance.PlayEffect(SoundManager.Choose(SoundManager.Instance.CombatAudio.Parry), transform.position);
                 _animator.SetTrigger("parried");
                 GetInterupted(false);
                 Attacking = false;
@@ -103,7 +98,6 @@ namespace Game
                 if (Vector3.Angle(lookDir, fellaDir) < 30f)
                 {
                     parried = parried || fella.GetParried();
-                    _holder.GainExpertice(5);
                 }
             }
             return parried;
@@ -118,19 +112,33 @@ namespace Game
 
         protected virtual void DealDamage()
         {
+            //TODO implement quality
+            //TODO implement effects
+            if(ItemStats.WeaponQuality == ItemWeaponSO.Quality.Null) 
+            {
+                Debug.LogError("Null quality");
+                return;
+            }
+            if(ItemStats.WeaponEffect == ItemWeaponSO.Effect.Null) 
+            {
+                Debug.LogError("Null effect");
+                return;
+            }
+
+            float damage = ItemStats.BaseDamage * DamageMod;
+            damage += 0.2f * ((int)ItemStats.WeaponQuality-2) * damage;
+
             for (int i = 0; i < Targets.Count; i++)
             {
                 if(Targets[i] != null)
                 {
-                    if(Targets[i].TakeAHit(_holder, Mathf.CeilToInt(ItemStats.BaseDamage * DamageMod)))
+                    if(Targets[i].TakeAHit(_holder, damage))
                     {
-                        _holder.GainExpertice(5);
-                        _audioSource.PlayOneShot(_audio.Choose(_audio.Hit));
+                        SoundManager.Instance.PlayEffect(SoundManager.Choose(SoundManager.Instance.CombatAudio.Hit), transform.position);
                     }
                 }
                 if (Targets[i].Health <= 0)
                 {
-                    _holder.GainExpertice(10);
                     Targets.Remove(Targets[i]);
                     i--;
                 }

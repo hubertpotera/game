@@ -19,13 +19,14 @@ namespace Game
 
 
 
-        public Tile(Vector2Int coords, IMapBlock.BlockType tileType, Vector2Int[] connectionDirs, WorldPrefabsSO worldPrefabs)
+        public Tile(Vector2Int coords, IMapBlock.BlockType tileType, Vector2Int[] connectionDirs, WorldPrefabsSO worldPrefabs, Transform parent)
         {
             _coords = coords;
             _connectionDirs = connectionDirs;
             _blockType = tileType;
             
             _go = GameObject.Instantiate(DecideTile(tileType, out float rotation, worldPrefabs));
+            _go.transform.parent = parent;
 
             Transform transform = _go.transform;
             transform.Rotate(0f, rotation, 0f, Space.World);
@@ -104,7 +105,7 @@ namespace Game
         
         public void PlaceTree(WorldPrefabsSO worldPrefabs)
         {
-            _placeable = new Placeable(_go.transform, WorldPrefabsSO.RandomGOFromList(worldPrefabs.PlaceableTree), 30, .3f);
+            _placeable = new Placeable(_go.transform, WorldPrefabsSO.RandomGOFromList(worldPrefabs.PlaceableTree));
         }
         
         public void RemovePlaceable()

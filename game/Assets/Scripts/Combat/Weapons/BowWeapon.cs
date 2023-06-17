@@ -21,7 +21,7 @@ namespace Game
         {
             if(!Recovering && transform.parent.GetComponent<Inventory>().Arrows > 0)
             {
-                _audioSource.PlayOneShot(_audio.Choose(_audio.BowDraw));
+                SoundManager.Instance.PlayEffect(SoundManager.Choose(SoundManager.Instance.CombatAudio.BowDraw), transform.position);
                 _animator.SetBool("drawing", true);
                 _drawStartTime = Time.time;
                 Attacking= true;
@@ -34,15 +34,13 @@ namespace Game
         {
             if(_drawStartTime > 0f && Time.time-_drawStartTime >= SwingTime)
             {
-                _audioSource.Stop();
-                _audioSource.PlayOneShot(_audio.Choose(_audio.BowRelease));
+                SoundManager.Instance.PlayEffect(SoundManager.Choose(SoundManager.Instance.CombatAudio.BowRelease), transform.position);
                 _animator.SetTrigger("shoot");
                 StartCoroutine(Recover(AttackRecoveryTime));
                 
                 BowArrow arrow = GameObject.Instantiate(_arrow, transform.position, Quaternion.identity).GetComponent<BowArrow>();
                 arrow.Direction = transform.forward;
                 arrow.WeaponStats = ItemStats;
-                arrow.Audio = _audio;
                 arrow.Holder = _holder;
                 _holder.GetComponent<Inventory>().Arrows --;
             }

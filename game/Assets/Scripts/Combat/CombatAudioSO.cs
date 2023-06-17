@@ -15,11 +15,5 @@ namespace Game
         public List<AudioClip> BowDraw = new List<AudioClip>();
         public List<AudioClip> BowRelease = new List<AudioClip>();
         public List<AudioClip> BowHit = new List<AudioClip>();
-
-        public AudioClip Choose(List<AudioClip> clips)
-        {
-            int roll = Random.Range(0,clips.Count);
-            return clips[roll];
-        }
     }
 }

@@ -18,7 +18,7 @@ namespace Game
 
 
         public Area(Vector2Int entrancePos, Vector2Int entranceDir, GameObject prefab, WorldPrefabsSO prefabs, 
-            ref Dictionary<Vector2Int, IMapBlock> map, ref List<Path> paths) 
+            ref Dictionary<Vector2Int, IMapBlock> map, ref List<Path> paths, Transform parent) 
         {
             Coords = entrancePos;
             _entrances = new List<Vector2Int>();
@@ -73,7 +73,7 @@ namespace Game
 
                 float angle = -Vector2.SignedAngle(Vector2.up, dirs[i]);
                 paths.Add(new Path(coord, angle, dirs[i], prefabs));
-                map.Add(coord, new Tile(coord, IMapBlock.BlockType.Path, new Vector2Int[] { dirs[i], -dirs[i] }, prefabs));
+                map.Add(coord, new Tile(coord, IMapBlock.BlockType.Path, new Vector2Int[] { dirs[i], -dirs[i] }, prefabs, parent));
             }
 
             // Calculate the area, which when left will delete this Area
@@ -92,7 +92,7 @@ namespace Game
             }
         }
 
-        public void ConciderDeletion(Vector2Int playerPos, Vector2Int goingDir, int generationDist, 
+        public bool ConciderDeletion(Vector2Int playerPos, Vector2Int goingDir, int generationDist, 
             ref List<Path> pathsReference, ref Dictionary<Vector2Int, IMapBlock> map, WorldPrefabsSO worldPrefabs)
         {
             // If all but one entrances are fully retracted and the player is far enough, initialize deletion
@@ -101,13 +101,13 @@ namespace Game
             {
                 if (nonRetractedEntrances.Contains(path.LastTile)) nonRetractedEntrances.Remove(path.LastTile);
             }
-            if (nonRetractedEntrances.Count != 1) return;
+            if (nonRetractedEntrances.Count != 1) return false;
 
             Vector2Int southWestLimit = _lowerLeftCorner - Vector2Int.one * generationDist;
             Vector2Int northEastLimit = _upperRightCorner + Vector2Int.one * generationDist;
             if (!(playerPos.x <= southWestLimit.x || playerPos.x >= northEastLimit.x
                 || playerPos.y <= southWestLimit.y || playerPos.y >= northEastLimit.y))
-                return;
+                return false;
 
             // Deleting the GameObject
             Object.Destroy(_go);
@@ -135,6 +135,8 @@ namespace Game
             // Creating a path instead
             float angle = -Vector2.SignedAngle(Vector2.up, -goingDir);
             pathsReference.Add(new Path(nonRetractedEntrances[0], angle, -goingDir, worldPrefabs));
+
+            return true;
         }
 
         public void Delete(ref Dictionary<Vector2Int, IMapBlock> map) { }
