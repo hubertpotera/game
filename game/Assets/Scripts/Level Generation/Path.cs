@@ -11,22 +11,37 @@ namespace Game
         public Vector2Int LastDir { get; private set; }
         public float Angle { get; private set; }
 
-        private GameObject _pathEventPrefab;
+        public GameObject PathEventPrefab;
+        public GameObject EventIndicator;
 
-        public Path(Vector2Int lastTile, float angle, Vector2Int dir, WorldPrefabsSO worldPrefabs)
+        private bool _isBossArea = false;
+
+        public Path(Vector2Int lastTile, float angle, Vector2Int dir, WorldPrefabsSO worldPrefabs, bool areaCanBeShop)
         {
             LastTile = lastTile;
             Angle = angle;
             LastDir = dir;
             
-            // Decide if the event should be a simple split or an Area
-            if(Random.value < 0.4f)
+            // Decide the event
+            float bossChance = Mathf.Sqrt(RunManager.Instance.TotalKilled-10) * 0.25f;
+            if(areaCanBeShop && Random.value < 0.3f)
             {
-                _pathEventPrefab = WorldPrefabsSO.RandomGOFromList(worldPrefabs.TilePathT);
+                PathEventPrefab = worldPrefabs.ShopArea;
+                EventIndicator = worldPrefabs.ShopIndicator;
+            }
+            else if(areaCanBeShop && Random.value < 0.1f)
+            {
+                PathEventPrefab = WorldPrefabsSO.RandomGOFromList(worldPrefabs.TilePathT);
+            }
+            else if(Random.value < bossChance)
+            {
+                _isBossArea = true;
+                PathEventPrefab = worldPrefabs.BossArea;
+                EventIndicator = worldPrefabs.BossIndicator;
             }
             else
             {
-                _pathEventPrefab = WorldPrefabsSO.RandomGOFromList(worldPrefabs.Areas);
+                PathEventPrefab = worldPrefabs.ChooseCombatArea(RunManager.Instance.TotalKilled);
             }
         }
 
@@ -37,10 +52,10 @@ namespace Game
             Vector2Int root = Backtrack(generationDist / 2, map, out bool foo);
 
             // Decide if this tile should be an event
-            if (areas.Count() == 0)
+            if (areas.Count() == 0 && CombatFella.AllTheFellas.Count == 1 && (!_isBossArea || LastDir.y == 0)) // Make sure if its a boss area it generates to the side
             {
-                areas.Add(new Area(LastTile, LastDir, _pathEventPrefab, worldPrefabs, ref map, ref paths, parent));
                 paths.Remove(this);
+                areas.Add(new Area(LastTile, LastDir, PathEventPrefab, worldPrefabs, ref map, ref paths, parent));
 
                 return;
             }

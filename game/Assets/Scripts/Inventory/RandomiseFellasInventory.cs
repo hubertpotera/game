@@ -42,12 +42,16 @@ namespace Game
             Inventory inventory = GetComponent<Inventory>();
             
             inventory.InHands = Instantiate((ItemWeaponSO)Choose(_mainWeaponChoices));
-            inventory.InHands.WeaponQuality = (ItemWeaponSO.Quality)Random.Range(_minWeaponQuality,_maxWeaponQuality);
+            inventory.InHands.ItemQuality = (ItemWeaponSO.Quality)Random.Range(_minWeaponQuality,_maxWeaponQuality+1);
             inventory.InHands.WeaponEffect = (ItemWeaponSO.Effect)_effects[Random.Range(0,_effects.Count)];
 
-            inventory.OnSide = Instantiate((ItemWeaponSO)Choose(_secondaryWeaponChoices));
-            inventory.OnSide.WeaponQuality = (ItemWeaponSO.Quality)Random.Range(_minWeaponQuality,_maxWeaponQuality);
-            inventory.OnSide.WeaponEffect = (ItemWeaponSO.Effect)_effects[Random.Range(0,_effects.Count)];
+
+            if(_secondaryWeaponChoices.Count > 0)
+            {
+                inventory.OnSide = Instantiate((ItemWeaponSO)Choose(_secondaryWeaponChoices));
+                inventory.OnSide.ItemQuality = (ItemWeaponSO.Quality)Random.Range(_minWeaponQuality,_maxWeaponQuality+1);
+                inventory.OnSide.WeaponEffect = (ItemWeaponSO.Effect)_effects[Random.Range(0,_effects.Count)];
+            }
 
             inventory.Head1 = (ItemArmorSO)Choose(_head1Choices);
             inventory.Head2 = (ItemArmorSO)Choose(_head2Choices);

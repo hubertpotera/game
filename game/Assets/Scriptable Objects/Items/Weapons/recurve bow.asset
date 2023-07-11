@@ -13,12 +13,15 @@ MonoBehaviour:
   m_Name: recurve bow
   m_EditorClassIdentifier: 
   Texture: {fileID: 2800000, guid: 7098bebfd397dec4ba4fb5d4b02796c5, type: 3}
+  ItemQuality: 0
+  Description: Recurve Bow:<br>Easier to draw, but deals a bit less damage than the
+    longbow.
   WeaponPrefab: {fileID: 4610090049163595606, guid: be7e91ae774c7f2498029d5f65c85bc1,
     type: 3}
   ThreatRange: 6
-  BaseDamage: 5
+  ArmourPenetration: 0
+  BaseDamage: 7
   BaseSwingTime: 0.8
-  BaseAttackRecoveryTime: 1.5
+  BaseAttackRecoveryTime: 0.5
   BaseParryRecoveryTime: 0.5
-  WeaponQuality: 0
   WeaponEffect: 0

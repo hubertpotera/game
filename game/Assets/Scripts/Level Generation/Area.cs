@@ -69,11 +69,30 @@ namespace Game
                 Vector2Int coord = axisCoords + relPossToEntrance[i] + dirs[i];
                 _entrances.Add(coord);
 
-                if (i == entranceIdx) continue;
+                if (i == entranceIdx)
+                {
+                    // Place entrance indicator
+                    // This may fuck up one day and you will need a different way to place indicators
+                    if(paths[0].EventIndicator != null)
+                    {
+                        Vector2Int offset = Misc.RotateV2Int(paths[0].LastDir, 1);
+                        ((Tile)map[coord]).PlaceIndicator(paths[0].EventIndicator, new Vector3(offset.x, 0f, offset.y));
+                    }
+                    continue;
+                }
 
                 float angle = -Vector2.SignedAngle(Vector2.up, dirs[i]);
-                paths.Add(new Path(coord, angle, dirs[i], prefabs));
-                map.Add(coord, new Tile(coord, IMapBlock.BlockType.Path, new Vector2Int[] { dirs[i], -dirs[i] }, prefabs, parent));
+                Path path = new Path(coord, angle, dirs[i], prefabs, !_go.name.Contains("Shop"));
+                paths.Add(path);
+                Tile tile = new Tile(coord, IMapBlock.BlockType.Path, new Vector2Int[] { dirs[i], -dirs[i] }, prefabs, parent);
+                map.Add(coord, tile);
+
+                // Add indicator
+                if(path.EventIndicator != null)
+                {
+                    Vector2Int offset = Misc.RotateV2Int(path.LastDir, 1);
+                    tile.PlaceIndicator(path.EventIndicator, new Vector3(offset.x, 0f, offset.y));
+                }
             }
 
             // Calculate the area, which when left will delete this Area
@@ -134,13 +153,21 @@ namespace Game
 
             // Creating a path instead
             float angle = -Vector2.SignedAngle(Vector2.up, -goingDir);
-            pathsReference.Add(new Path(nonRetractedEntrances[0], angle, -goingDir, worldPrefabs));
+            bool shopIsBeingCreated = false;
+            foreach (var path in pathsReference)
+            {
+                if(path.EventIndicator != null && path.PathEventPrefab.name.Contains("Shop"))
+                {
+                    shopIsBeingCreated = true;
+                }
+            }
+            pathsReference.Add(new Path(nonRetractedEntrances[0], angle, -goingDir, worldPrefabs, shopIsBeingCreated));
 
             return true;
         }
 
         public void Delete(ref Dictionary<Vector2Int, IMapBlock> map) { }
-        public void PlaceTree(WorldPrefabsSO worldPrefabs) { }
+        public void PlaceTree(WorldPrefabsSO worldPrefabs, int treeRange) { }
         public void RemovePlaceable() { }
     }
 }

@@ -13,12 +13,15 @@ MonoBehaviour:
   m_Name: longbow
   m_EditorClassIdentifier: 
   Texture: {fileID: 2800000, guid: fbb4c80533d35114fbf5c07ca62ef1fd, type: 3}
+  ItemQuality: 0
+  Description: Longbow:<br>The most simple of bows. Deals a lot of damage but is
+    slow to draw
   WeaponPrefab: {fileID: 4610090049163595606, guid: 74d36e9fc5c8f444dac636550de22cff,
     type: 3}
   ThreatRange: 6
-  BaseDamage: 8
+  ArmourPenetration: 0.305
+  BaseDamage: 5
   BaseSwingTime: 1.5
-  BaseAttackRecoveryTime: 2
+  BaseAttackRecoveryTime: 0.5
   BaseParryRecoveryTime: 0
-  WeaponQuality: 0
   WeaponEffect: 0

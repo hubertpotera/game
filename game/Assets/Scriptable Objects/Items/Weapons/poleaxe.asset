@@ -13,12 +13,14 @@ MonoBehaviour:
   m_Name: poleaxe
   m_EditorClassIdentifier: 
   Texture: {fileID: 2800000, guid: 283919b57bba0dc4e9ca3c27b1f85462, type: 3}
+  ItemQuality: 0
+  Description: Poleaxe:<br>Thrust right after you slash.
   WeaponPrefab: {fileID: 4610090049163595606, guid: ee3b3666cb743ee4e803ae5a9bc7a596,
     type: 3}
-  ThreatRange: 1.3
-  BaseDamage: 7
-  BaseSwingTime: 0.5
-  BaseAttackRecoveryTime: 0.5
-  BaseParryRecoveryTime: 0.5
-  WeaponQuality: 0
+  ThreatRange: 1.6
+  ArmourPenetration: 0.102
+  BaseDamage: 9
+  BaseSwingTime: 0.8
+  BaseAttackRecoveryTime: 0.4
+  BaseParryRecoveryTime: 0.6
   WeaponEffect: 0

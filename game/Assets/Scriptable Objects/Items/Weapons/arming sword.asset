@@ -13,12 +13,14 @@ MonoBehaviour:
   m_Name: arming sword
   m_EditorClassIdentifier: 
   Texture: {fileID: 2800000, guid: 9788e636883e44044b80d5326f60e1f8, type: 3}
+  ItemQuality: 0
+  Description: Arming Sword:<br>A well balanced weapon with a wide striking arc.
   WeaponPrefab: {fileID: 4610090049163595606, guid: 7694656452c37134c87f52f271d05f10,
     type: 3}
   ThreatRange: 1.3
+  ArmourPenetration: 0
   BaseDamage: 7
   BaseSwingTime: 0.7
-  BaseAttackRecoveryTime: 0.5
+  BaseAttackRecoveryTime: 0.4
   BaseParryRecoveryTime: 0.5
-  WeaponQuality: 0
   WeaponEffect: 0

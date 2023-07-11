@@ -93,7 +93,8 @@ GameObject:
   m_Component:
   - component: {fileID: 2177943147778238857}
   - component: {fileID: 2177943147778238859}
-  - component: {fileID: 7848922289049679726}
+  - component: {fileID: 5414584255126940138}
+  - component: {fileID: 5527558411605553858}
   - component: {fileID: 4990975645429743261}
   - component: {fileID: 4996044201076706698}
   - component: {fileID: 2383513251981537670}
@@ -147,7 +148,7 @@ CharacterController:
   m_SkinWidth: 0.08
   m_MinMoveDistance: 0.001
   m_Center: {x: 0, y: 1, z: 0}
---- !u!114 &7848922289049679726
+--- !u!114 &5414584255126940138
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -156,15 +157,39 @@ MonoBehaviour:
   m_GameObject: {fileID: 2177943147778238858}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 75dd6e11f734bca46ba41aa9a849cf46, type: 3}
+  m_Script: {fileID: 11500000, guid: a9207e1d6bc88c94ebc335a5aa69d181, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  MaxHealth: 10
-  Speed: 3
+  ItemHealthMod: 1
+  ItemSpeedMod: 1
+  ItemDashDistMod: 1
+  ItemDashCooldownMod: 1
+  ItemAttackSpeedMod: 1
+  _baseMaxHealth: 24
+  _baseSpeed: 3.5
   Acceleration: 10
-  KnockbackRecovery: 3
-  _parryChance: 0.6
-  _chanceToFollowOthers: 0.3
+  KnockbackRecovery: 6
+  LookRot: 0
+  _parryChance: 0.4
+  _chanceToFollowOthers: 0.2
+  SpawnDestroyed: 0
+  Stance: 0
+--- !u!114 &5527558411605553858
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2177943147778238858}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 43fbde0d62f242e46ae0d08bfa4a514a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _mainWeapon: {fileID: 11400000, guid: f50d3b73b935ab94aa9ec0e197a437a0, type: 2}
+  _sideWeapon: {fileID: 11400000, guid: bb8e909290a43b34ca4cc537cc94d842, type: 2}
+  _weaponQuality: 3
+  _weaponEffect: 1
 --- !u!114 &4990975645429743261
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -177,13 +202,21 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8c425d40171560644a433a7668127355, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  InHands: {fileID: 11400000, guid: f50d3b73b935ab94aa9ec0e197a437a0, type: 2}
-  OnSide: {fileID: 11400000, guid: bb8e909290a43b34ca4cc537cc94d842, type: 2}
+  InHands: {fileID: 0}
+  OnSide: {fileID: 0}
   Arrows: 0
   Head1: {fileID: 0}
   Head2: {fileID: 0}
   Body1: {fileID: 11400000, guid: 0198a1e4d136bbf499088897bf9ac922, type: 2}
   Body2: {fileID: 0}
+  Item1: {fileID: 0}
+  Item2: {fileID: 0}
+  Item3: {fileID: 0}
+  Item4: {fileID: 0}
+  Item1Object: {fileID: 0}
+  Item2Object: {fileID: 0}
+  Item3Object: {fileID: 0}
+  Item4Object: {fileID: 0}
 --- !u!114 &4996044201076706698
 MonoBehaviour:
   m_ObjectHideFlags: 0

@@ -13,12 +13,15 @@ MonoBehaviour:
   m_Name: greatsword
   m_EditorClassIdentifier: 
   Texture: {fileID: 2800000, guid: beaecc01a6ee69b4cb45c6213f1bbfd9, type: 3}
+  ItemQuality: 0
+  Description: Greatsword:<br>Starts slow but is more effective the more attacks
+    in a row you perform.
   WeaponPrefab: {fileID: 4610090049163595606, guid: 51c56c0a906ebce4bb130b9fabfb1054,
     type: 3}
   ThreatRange: 1.3
-  BaseDamage: 7
-  BaseSwingTime: 0.5
-  BaseAttackRecoveryTime: 0.5
-  BaseParryRecoveryTime: 0.5
-  WeaponQuality: 0
+  ArmourPenetration: 0
+  BaseDamage: 8
+  BaseSwingTime: 0.8
+  BaseAttackRecoveryTime: 0.6
+  BaseParryRecoveryTime: 0.6
   WeaponEffect: 0

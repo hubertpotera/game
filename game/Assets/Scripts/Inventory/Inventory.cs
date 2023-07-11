@@ -8,16 +8,35 @@ namespace Game
     {
         public ItemWeaponSO InHands;
         public ItemWeaponSO OnSide;
+        [Space]
 
-        public int Arrows;
+        public int Arrows;  //TODO maybe do away with this?
 
         public GameObject WeaponGO { get; private set; }
         public Weapon Weapon { get; private set; }
 
+        [Space]
         public ItemArmorSO Head1;
         public ItemArmorSO Head2;
         public ItemArmorSO Body1;
         public ItemArmorSO Body2;
+        [Space]
+
+        public ItemEffectSO Item1;
+        public ItemEffectSO Item2;
+        public ItemEffectSO Item3;
+        public ItemEffectSO Item4;
+
+        [HideInInspector]
+        public EffectItem Item1Object;
+        [HideInInspector]
+        public EffectItem Item2Object;
+        [HideInInspector]
+        public EffectItem Item3Object;
+        [HideInInspector]
+        public EffectItem Item4Object;
+
+        private Transform _itemHolder;
 
         public int GetArmor() 
         {
@@ -29,6 +48,36 @@ namespace Game
             return sum;
         } 
 
+        public void ApplyItemEffects()
+        {
+            if(_itemHolder == null) 
+            {
+                _itemHolder = new GameObject("item holder").transform;
+                _itemHolder.transform.parent = transform;
+            }
+
+            CombatFella fella = GetComponent<CombatFella>();
+            fella.ItemHealthMod = 1f;
+            fella.ItemSpeedMod = 1f;
+            fella.ItemDashDistMod = 1f;
+            fella.ItemDashCooldownMod = 1f;
+            fella.ItemAttackSpeedMod = 1f;
+            Item1Object = InitializeItem(fella, Item1);
+            Item2Object = InitializeItem(fella, Item2);
+            Item3Object = InitializeItem(fella, Item3);
+            Item4Object = InitializeItem(fella, Item4);
+            if(Weapon != null)
+                Weapon.UpdateParameters();
+        }
+
+        private EffectItem InitializeItem(CombatFella holder, ItemEffectSO item)
+        {
+            if(item == null) return null;
+            EffectItem o = Instantiate(item.PrefabWithEffect, _itemHolder).GetComponent<EffectItem>();
+            o.Initialize(holder, item);
+            return o;
+        }
+
         private void Awake()
         {
             EquipWeapon(InHands);
@@ -36,7 +85,7 @@ namespace Game
 
         public void SwapWeapons()
         {
-            if(InHands == null || OnSide == null) return;
+            // if(InHands == null || OnSide == null) return;
             
             ItemWeaponSO old = InHands;
             InHands = OnSide;
@@ -64,6 +113,38 @@ namespace Game
             WeaponGO.transform.rotation = rot;
             Weapon = WeaponGO.GetComponent<Weapon>();
             Weapon.ItemStats = weapon;
+        }
+
+        public ref ItemWeaponSO GetWeaponByIndex(int idx)
+        {
+            switch (idx)
+            {
+                case 0:
+                    return ref InHands;
+                case 1:
+                    return ref OnSide;
+            }
+
+            Debug.LogError("wrong item idx");
+            return ref InHands;
+        }
+        
+        public ref ItemEffectSO GetItemByIndex(int idx)
+        {
+            switch (idx)
+            {
+                case 0:
+                    return ref Item1;
+                case 1:
+                    return ref Item2;
+                case 2:
+                    return ref Item3;
+                case 3:
+                    return ref Item4;
+            }
+
+            Debug.LogError("wrong item idx");
+            return ref Item1;
         }
     }
 }

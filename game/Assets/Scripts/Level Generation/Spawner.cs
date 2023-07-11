@@ -57,12 +57,21 @@ namespace Game
 
         void OnDrawGizmos()
         {
-            Gizmos.DrawSphere(transform.position, .5f);
+            Gizmos.DrawSphere(transform.position, .25f);
         }
 
         void OnDestroy()
         {
-            Destroy(spawned);
+            if(spawned == null) return;
+            
+            if(spawned.TryGetComponent<AIBasic>(out AIBasic fella))
+            {
+                fella.SpawnDestroyed = true;
+            }
+            else
+            {
+                Destroy(spawned);
+            }
         }
     }
 }

@@ -12,11 +12,13 @@ namespace Game
         private Vector2Int[] _connectionDirs;
         
         private GameObject _go;
-        private Placeable _placeable;
+        private GameObject _placeable;
 
         public Vector2Int[] GetConnectionDirs() => _connectionDirs;
         public IMapBlock.BlockType GetBlockType() => _blockType;
 
+        private static List<GameObject> _treePool;
+        private static int _treeIndexer = 0;
 
 
         public Tile(Vector2Int coords, IMapBlock.BlockType tileType, Vector2Int[] connectionDirs, WorldPrefabsSO worldPrefabs, Transform parent)
@@ -103,15 +105,44 @@ namespace Game
             return worldPrefabs.TileEmpty[0];
         }
         
-        public void PlaceTree(WorldPrefabsSO worldPrefabs)
+        public void PlaceTree(WorldPrefabsSO worldPrefabs, int treeRange)
         {
-            _placeable = new Placeable(_go.transform, WorldPrefabsSO.RandomGOFromList(worldPrefabs.PlaceableTree));
+            // Instanciate tree pool
+            if(_treePool == null)
+            {
+                _treePool = new List<GameObject>();
+                for (int i = 0; i < treeRange*treeRange; i++)
+                {
+                    _treePool.Add(GameObject.Instantiate(WorldPrefabsSO.RandomGOFromList(worldPrefabs.PlaceableTree)));
+                    _treePool[i].SetActive(false);  
+                    _treePool[i].transform.localScale = _go.transform.localScale;
+                }
+            }
+
+            while(_treePool[_treeIndexer].activeInHierarchy == true) 
+            {
+                _treeIndexer = (_treeIndexer+1)%(treeRange*treeRange);
+            }
+            _placeable = _treePool[_treeIndexer];
+            _placeable.SetActive(true);
+            _placeable.transform.position = _go.transform.position;
+        }
+
+        public void PlaceIndicator(GameObject prefab, Vector3 offset)
+        {
+            GameObject indicator = GameObject.Instantiate(prefab);
+            
+            indicator.transform.parent = _go.transform;
+            indicator.transform.position = _go.transform.position + offset;
         }
         
         public void RemovePlaceable()
         {
             if(_placeable != null)
-                _placeable.Delete();
+            {
+                _placeable.SetActive(false);
+                _placeable = null;
+            }
         }
 
         public void Delete(ref Dictionary<Vector2Int, IMapBlock> map)
@@ -119,6 +150,12 @@ namespace Game
             RemovePlaceable();
             map.Remove(_coords);
             Object.Destroy(_go);
+        }
+
+        public static void ClearTreePool()
+        {
+            _treePool = null;
+            _treeIndexer = 0;
         }
     }
 }

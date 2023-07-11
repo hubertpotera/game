@@ -13,12 +13,14 @@ MonoBehaviour:
   m_Name: spear
   m_EditorClassIdentifier: 
   Texture: {fileID: 2800000, guid: 1f5ae5a6b5ff7ed4cb5ff6925f4888b5, type: 3}
+  ItemQuality: 0
+  Description: Spear:<br>Nimble and longer range.
   WeaponPrefab: {fileID: 3558126594483730671, guid: 620f3a14a19692d43bf13bb40986aa0c,
     type: 3}
   ThreatRange: 2.5
+  ArmourPenetration: 0
   BaseDamage: 5
   BaseSwingTime: 0.6
   BaseAttackRecoveryTime: 0.4
   BaseParryRecoveryTime: 0.8
-  WeaponQuality: 0
   WeaponEffect: 0

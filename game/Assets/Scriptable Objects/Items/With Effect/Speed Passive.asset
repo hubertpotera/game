@@ -1,0 +1,19 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b33725d32fc6e4b4fa40b58b77e6ee5e, type: 3}
+  m_Name: Speed Passive
+  m_EditorClassIdentifier: 
+  Texture: {fileID: 2800000, guid: d3c87a5fe0e0f584f883a748c843b732, type: 3}
+  ItemQuality: 0
+  Description: PASSIVE<BR>Shoes:<br>Increase speed.
+  PrefabWithEffect: {fileID: 4820803686656547708, guid: b3bfd38a3c999d642aa0ed8b402628e3,
+    type: 3}

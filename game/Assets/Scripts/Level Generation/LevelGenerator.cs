@@ -6,6 +6,28 @@ namespace Game
 {
     public class LevelGenerator : MonoBehaviour
     {
+        public static LevelGenerator Instance { get; private set; }
+
+        void Awake()
+        {
+            if(Instance == null)
+            {
+                Instance = this;
+            }
+            else
+            {
+                Debug.LogError("another singleton matey");
+                Destroy(gameObject);
+                return;
+            }
+
+            if(_player == null) return;
+
+            _paths= new List<Path>();
+            _areas= new List<Area>();
+            GenerateStart();
+        }
+
         [SerializeField]
         private WorldPrefabsSO _prefabs;
 
@@ -13,11 +35,13 @@ namespace Game
         [SerializeField]
         private Transform _player;
         [SerializeField]
-        private int _generationDist= 16;
+        private int _generationDist = 16;
         [SerializeField]
         private float _pathNudge = 5f;
         [SerializeField]
-        private int _treeDistFromPath= 2;
+        private int _treeDistFromPath = 2;
+
+        public int SeeingRange = 10;
 
         private Vector2Int _prevPlayerCoords = Vector2Int.zero;
 
@@ -27,18 +51,10 @@ namespace Game
 
 
 
-        private void Awake() 
-        {
-            _prefabs = Resources.Load<WorldPrefabsSO>("WorldPrefabs");
-            _paths= new List<Path>();
-            _areas= new List<Area>();
-            GenerateStart();
-        }
-
-
-
         private void Update() 
         {
+            if(_player == null) return;
+            
             Vector2Int playerCoords = PosToCoords(_player.position);
             if(playerCoords != _prevPlayerCoords)
             {
@@ -155,7 +171,7 @@ namespace Game
                     if (!valid) break;
                 }
                 if (!valid) continue;
-                _map[toCreate[i]].PlaceTree(_prefabs);
+                _map[toCreate[i]].PlaceTree(_prefabs, (_generationDist-_treeDistFromPath)*2-1);
             }
 
             for (int i = 0; i < toDelete.Count; i++)
@@ -177,11 +193,12 @@ namespace Game
 
                     if (x == 0) _map.Add(coords, new Tile(coords, IMapBlock.BlockType.Path, new Vector2Int[] { Vector2Int.up, Vector2Int.down }, _prefabs, transform));
                     else _map.Add(coords, new Tile(coords, IMapBlock.BlockType.Empty, new Vector2Int[0], _prefabs, transform));
+                    if(Mathf.Abs(x)>1 && Mathf.Abs(x)<5 && Mathf.Abs(y)<5) _map[coords].PlaceTree(_prefabs, (_generationDist-_treeDistFromPath)*2-1);
                 }
             }
-            //_paths.Add(new Path(new Vector2Int(0, _generationDist - 1), 0, Vector2Int.up, true, _prefabs));
-            _paths.Add(new Path(new Vector2Int(0, _generationDist - 1), 0, Vector2Int.up, _prefabs)); // TEMP
-            _paths.Add(new Path(new Vector2Int(0, -_generationDist + 1), 180, Vector2Int.down, _prefabs));
+
+            _paths.Add(new Path(new Vector2Int(0, _generationDist - 1), 0, Vector2Int.up, _prefabs, false));
+            _paths.Add(new Path(new Vector2Int(0, -_generationDist + 1), 180, Vector2Int.down, _prefabs, false));
         }
 
         /// <summary>Range 1 will return 1 block</summary>
@@ -220,6 +237,11 @@ namespace Game
             coords += pos.x < 0 ? Vector2Int.left : Vector2Int.zero; 
             coords += pos.z < 0 ? Vector2Int.down : Vector2Int.zero; 
             return coords;
+        }
+
+        void OnDestroy()
+        {
+            Tile.ClearTreePool();
         }
         
         private void OnValidate() 

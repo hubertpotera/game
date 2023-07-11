@@ -13,12 +13,15 @@ MonoBehaviour:
   m_Name: dagger
   m_EditorClassIdentifier: 
   Texture: {fileID: 2800000, guid: baee8a0046549484fbd1752dc8fb6dc6, type: 3}
+  ItemQuality: 0
+  Description: Dagger:<br>Doesn't deal much damage but is vey quick and effective
+    against armour.
   WeaponPrefab: {fileID: 4610090049163595606, guid: 5bfb17367eafd7d4a96c2035802d7270,
     type: 3}
-  ThreatRange: 1.3
-  BaseDamage: 7
-  BaseSwingTime: 0.5
-  BaseAttackRecoveryTime: 0.5
-  BaseParryRecoveryTime: 0.5
-  WeaponQuality: 0
+  ThreatRange: 1
+  ArmourPenetration: 0.301
+  BaseDamage: 3
+  BaseSwingTime: 0.6
+  BaseAttackRecoveryTime: 0.1
+  BaseParryRecoveryTime: 0.1
   WeaponEffect: 0

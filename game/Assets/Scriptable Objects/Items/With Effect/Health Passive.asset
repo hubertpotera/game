@@ -1,0 +1,19 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b33725d32fc6e4b4fa40b58b77e6ee5e, type: 3}
+  m_Name: Health Passive
+  m_EditorClassIdentifier: 
+  Texture: {fileID: 2800000, guid: 2d802f7954c1db549a78a406d2a9b3ab, type: 3}
+  ItemQuality: 0
+  Description: PASSIVE<BR>Amulet:<br>Increase health
+  PrefabWithEffect: {fileID: 4820803686656547708, guid: 4684d69e64b4fc348b1ef25781f7f846,
+    type: 3}
