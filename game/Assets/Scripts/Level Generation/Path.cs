@@ -52,7 +52,7 @@ namespace Game
             Vector2Int root = Backtrack(generationDist / 2, map, out bool foo);
 
             // Decide if this tile should be an event
-            if (areas.Count() == 0 && CombatFella.AllTheFellas.Count == 1 && (!_isBossArea || LastDir.y == 0)) // Make sure if its a boss area it generates to the side
+            if (areas.Count == 0 && CombatFella.AllTheFellas.Count == 1 && (!_isBossArea || LastDir.y == 0)) // Make sure if its a boss area it generates to the side
             {
                 paths.Remove(this);
                 areas.Add(new Area(LastTile, LastDir, PathEventPrefab, worldPrefabs, ref map, ref paths, parent));
@@ -60,6 +60,7 @@ namespace Game
                 return;
             }
 
+            // Continue path
             while (toCreate.Contains(nextTile))
             {
                 float goingToPathAngle = -Vector2.SignedAngle(coordsChange, Quaternion.Euler(0f, 0f, -Angle) * Vector2.up);

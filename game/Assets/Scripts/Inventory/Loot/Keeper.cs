@@ -79,10 +79,6 @@ namespace Game
 
         private void CloseShop()
         {
-            // Update player inventory
-            _player.Inventory.ApplyItemEffects();
-            _player.UpdateInventory();
-            
             Shop shop = _shop.GetComponent<Shop>();
             InventoryDisplay inventoryDisplay = _shop.GetComponent<InventoryDisplay>();
 

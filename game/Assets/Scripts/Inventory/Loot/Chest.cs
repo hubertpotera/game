@@ -15,9 +15,7 @@ namespace Game
         [Space]
 
         [SerializeField]
-        private int _minItemQuality=1;
-        [SerializeField]
-        private int _maxItemQuality=3;
+        private List<int> _itemQualities;
         [SerializeField]
         private List<ItemWeaponSO.Effect> _weaponEffects;
 
@@ -52,7 +50,7 @@ namespace Game
         public ItemSO GenerateLoot()
         {
             _loot = Instantiate(_possibleContents[Random.Range(0, _possibleContents.Count)]);
-            _loot.ItemQuality = (ItemSO.Quality)Random.Range(_minItemQuality,_maxItemQuality+1);
+            _loot.ItemQuality = (ItemWeaponSO.Quality)_itemQualities[Random.Range(0,_itemQualities.Count)];
             
             if(_loot.GetType() == typeof(ItemWeaponSO))
             {

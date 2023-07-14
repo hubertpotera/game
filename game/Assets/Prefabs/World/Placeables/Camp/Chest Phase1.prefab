@@ -10,13 +10,58 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 280310259050354848, guid: d34e790caaa0a9b47ba0c3659b274c9a,
         type: 3}
+      propertyPath: _maxItemQuality
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 280310259050354848, guid: d34e790caaa0a9b47ba0c3659b274c9a,
+        type: 3}
       propertyPath: _minItemQuality
-      value: 2
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 280310259050354848, guid: d34e790caaa0a9b47ba0c3659b274c9a,
+        type: 3}
+      propertyPath: _itemQualities.Array.size
+      value: 6
       objectReference: {fileID: 0}
     - target: {fileID: 280310259050354848, guid: d34e790caaa0a9b47ba0c3659b274c9a,
         type: 3}
       propertyPath: _weaponEffects.Array.size
       value: 7
+      objectReference: {fileID: 0}
+    - target: {fileID: 280310259050354848, guid: d34e790caaa0a9b47ba0c3659b274c9a,
+        type: 3}
+      propertyPath: _itemQualities.Array.data[0]
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 280310259050354848, guid: d34e790caaa0a9b47ba0c3659b274c9a,
+        type: 3}
+      propertyPath: _itemQualities.Array.data[1]
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 280310259050354848, guid: d34e790caaa0a9b47ba0c3659b274c9a,
+        type: 3}
+      propertyPath: _itemQualities.Array.data[2]
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 280310259050354848, guid: d34e790caaa0a9b47ba0c3659b274c9a,
+        type: 3}
+      propertyPath: _itemQualities.Array.data[3]
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 280310259050354848, guid: d34e790caaa0a9b47ba0c3659b274c9a,
+        type: 3}
+      propertyPath: _itemQualities.Array.data[4]
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 280310259050354848, guid: d34e790caaa0a9b47ba0c3659b274c9a,
+        type: 3}
+      propertyPath: _itemQualities.Array.data[5]
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 280310259050354848, guid: d34e790caaa0a9b47ba0c3659b274c9a,
+        type: 3}
+      propertyPath: _itemQualities.Array.data[6]
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 280310259050354848, guid: d34e790caaa0a9b47ba0c3659b274c9a,
         type: 3}

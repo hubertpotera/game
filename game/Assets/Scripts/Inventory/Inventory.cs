@@ -68,6 +68,7 @@ namespace Game
             Item4Object = InitializeItem(fella, Item4);
             if(Weapon != null)
                 Weapon.UpdateParameters();
+            fella.ChangeHealth(0);
         }
 
         private EffectItem InitializeItem(CombatFella holder, ItemEffectSO item)
@@ -85,8 +86,6 @@ namespace Game
 
         public void SwapWeapons()
         {
-            // if(InHands == null || OnSide == null) return;
-            
             ItemWeaponSO old = InHands;
             InHands = OnSide;
             OnSide = old;

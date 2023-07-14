@@ -11,7 +11,7 @@ namespace Game
 
         void Awake()
         {
-            Vector3 offset = new Vector3((Random.value*2-1)*0.1f, 0f, (Random.value*2-1)*0.1f);
+            Vector3 offset = new Vector3((Random.value*2-1)*0.3f, (Random.value*2-1)*0.01f, (Random.value*2-1)*0.3f);
             foreach (var layer in _layers)
             {
                 layer.transform.rotation = Quaternion.Euler(90f, Random.value*360f, 0f);

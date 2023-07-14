@@ -161,7 +161,7 @@ namespace Game
                     shopIsBeingCreated = true;
                 }
             }
-            pathsReference.Add(new Path(nonRetractedEntrances[0], angle, -goingDir, worldPrefabs, shopIsBeingCreated));
+            pathsReference.Add(new Path(nonRetractedEntrances[0], angle, -goingDir, worldPrefabs, !shopIsBeingCreated));
 
             return true;
         }

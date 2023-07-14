@@ -10,7 +10,6 @@ namespace Game
         {
             base.Initialize(holder, item);
             _holder.ItemHealthMod += ((int)_item.ItemQuality*0.2f);
-            _holder.ChangeHealth(0);
         }
     }
 }

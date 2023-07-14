@@ -59,9 +59,10 @@ namespace Game
         public override void ChangeHealth(int change)
         {
             base.ChangeHealth(change);
-            if(_phase1)
+            if(_phase1 && change < 0)
             {
                 _phase1 = false;
+                _decidedToSwitchWeapons = true;
                 Stance = FightStance.Defensive;
             }
         }

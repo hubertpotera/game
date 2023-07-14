@@ -126,11 +126,11 @@ namespace Game
             Ray mouseRay = Camera.main.ScreenPointToRay(Input.mousePosition);
             RaycastHit hit;
 
-            if(BoughtItem == 0 && _colliderItemShop1.Raycast(mouseRay, out hit, Mathf.Infinity) && SpendTokens(3))
+            if(BoughtItem == 0 && _colliderItemShop1.Raycast(mouseRay, out hit, Mathf.Infinity) && SpendTokens((int)ItemShop1.ItemQuality+1))
             {
                 ItemWasBought(1);
             }
-            if(BoughtItem == 0 && _colliderItemShop2.Raycast(mouseRay, out hit, Mathf.Infinity) && SpendTokens(3))
+            if(BoughtItem == 0 && _colliderItemShop2.Raycast(mouseRay, out hit, Mathf.Infinity) && SpendTokens((int)ItemShop2.ItemQuality+1))
             {
                 ItemWasBought(2);
             }
@@ -147,23 +147,24 @@ namespace Game
             {
                 RunManager.Instance.Head1Level += 1;
             }
-            
+
             if(_colliderHead2.Raycast(mouseRay, out hit, Mathf.Infinity) && SpendTokens(_invProgression.Head2Upgrades[RunManager.Instance.Head2Level+1].Cost))
             {
                 RunManager.Instance.Head2Level += 1;
             }
-            
+
             if(_colliderBody1.Raycast(mouseRay, out hit, Mathf.Infinity) && SpendTokens(_invProgression.Body1Upgrades[RunManager.Instance.Body1Level+1].Cost))
             {
                 RunManager.Instance.Body1Level += 1;
             }
-            
+
             if(_colliderBody2.Raycast(mouseRay, out hit, Mathf.Infinity) && SpendTokens(_invProgression.Body2Upgrades[RunManager.Instance.Body2Level+1].Cost))
             {
                 RunManager.Instance.Body2Level += 1;
             }
 
             _inventoryDisplay.UpdatePlayerToken();
+            Player.UpdateInventory();
             UpdateCosts();
         }
 
@@ -223,22 +224,42 @@ namespace Game
 
             if(_colliderHead1.Raycast(mouseRay, out hit, Mathf.Infinity))
             {
-                _inventoryDisplay.ShowToolTip("Upgrade your coif");
+                if(RunManager.Instance.Head1Level == _invProgression.Head1Upgrades.Count-1) return;
+
+                int improvement = _invProgression.Head1Upgrades[RunManager.Instance.Head1Level+1].Item.ArmorValue;
+                if(RunManager.Instance.Head1Level >= 0)
+                    improvement -= Player.Inventory.Head1.ArmorValue;
+                _inventoryDisplay.ShowToolTip("Upgrade your coif<br>+" + improvement + "armour");
             }
             
             if(_colliderHead2.Raycast(mouseRay, out hit, Mathf.Infinity))
             {
-                _inventoryDisplay.ShowToolTip("Upgrade your helmet");
+                if(RunManager.Instance.Head2Level == _invProgression.Head2Upgrades.Count-1) return;
+
+                int improvement = _invProgression.Head2Upgrades[RunManager.Instance.Head2Level+1].Item.ArmorValue;
+                if(RunManager.Instance.Head2Level >= 0)
+                    improvement -= Player.Inventory.Head2.ArmorValue;
+                _inventoryDisplay.ShowToolTip("Upgrade your helmet<br>+" + improvement + "armour");
             }
             
             if(_colliderBody1.Raycast(mouseRay, out hit, Mathf.Infinity))
             {
-                _inventoryDisplay.ShowToolTip("Upgrade your gamberson");
+                if(RunManager.Instance.Body1Level == _invProgression.Body1Upgrades.Count-1) return;
+
+                int improvement = _invProgression.Body1Upgrades[RunManager.Instance.Body1Level+1].Item.ArmorValue;
+                if(RunManager.Instance.Body1Level >= 0)
+                    improvement -= Player.Inventory.Body1.ArmorValue;
+                _inventoryDisplay.ShowToolTip("Upgrade your gamberson<br>+" + improvement + "armour");
             }
             
             if(_colliderBody2.Raycast(mouseRay, out hit, Mathf.Infinity))
             {
-                _inventoryDisplay.ShowToolTip("Upgrade your armour");
+                if(RunManager.Instance.Body2Level == _invProgression.Body2Upgrades.Count-1) return;
+
+                int improvement = _invProgression.Body2Upgrades[RunManager.Instance.Body2Level+1].Item.ArmorValue;
+                if(RunManager.Instance.Body2Level >= 0)
+                    improvement -= Player.Inventory.Body2.ArmorValue;
+                _inventoryDisplay.ShowToolTip("Upgrade your armour<br>+" + improvement + "armour");
             }
         }
 
@@ -307,6 +328,17 @@ namespace Game
             else
             {
                 _body2Cost.text = "";
+            }
+
+            if(BoughtItem == 0)
+            {
+                if(ItemShop1 != null) _item1Cost.text = ((int)ItemShop1.ItemQuality+1).ToString();
+                if(ItemShop2 != null) _item2Cost.text = ((int)ItemShop2.ItemQuality+1).ToString();
+            }
+            else
+            {
+                _item1Cost.text = "";
+                _item2Cost.text = "";
             }
         }
 

@@ -8,10 +8,12 @@ namespace Game
     {
         public override bool Use()
         {
+            _holder.Inventory.ApplyItemEffects();
+
             _holder.ItemAttackSpeedMod *= 1f + ((int)_item.ItemQuality*0.1f);
-            _holder.ItemDashCooldownMod *= 1f - ((int)_item.ItemQuality*0.05f);
-            _holder.ItemDashDistMod *= 1f + ((int)_item.ItemQuality*0.05f);
-            _holder.ItemSpeedMod *= 1f + ((int)_item.ItemQuality*0.05f);
+            _holder.ItemDashCooldownMod *= 1f - ((int)_item.ItemQuality*0.1f);
+            _holder.ItemDashDistMod *= 1f + ((int)_item.ItemQuality*0.1f);
+            _holder.ItemSpeedMod *= 1f + ((int)_item.ItemQuality*0.1f);
             _holder.Inventory.Weapon.UpdateParameters();
 
             StartCoroutine(DestroyAfterDelay());
@@ -22,7 +24,7 @@ namespace Game
         private IEnumerator DestroyAfterDelay()
         {
             yield return new WaitForSeconds(2f + 2f*(int)_item.ItemQuality);
-            Debug.Log("yeh");
+            _holder.Inventory.ApplyItemEffects();
             Destroy(this);
         }
     }

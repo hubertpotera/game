@@ -121,11 +121,12 @@ namespace Game
         void Update()
         {
             //TODO make seperate menu inputs???
-            if(Input.GetKeyDown(KeyCode.Escape) || Input.GetKeyDown(KeyCode.Tab))
+            if(Input.GetKeyDown(KeyCode.Escape) || Input.GetKeyDown(KeyCode.Tab) || Input.GetKeyDown(KeyCode.E))
             {
                 OnClose?.Invoke();
                 Player.BlockInputs = false;
                 Player.Inventory.ApplyItemEffects();
+                Player.UpdateInventory();
                 Player.Inventory.EquipWeapon(Player.Inventory.InHands);
                 Destroy(gameObject, 0);
             }
@@ -312,7 +313,8 @@ namespace Game
             if(_toolTipGo == null)
             {
                 _toolTipGo = Instantiate(_toolTipPrefab, transform);
-                _toolTipGo.transform.position = _cameraTarget.position + 3.1f*Vector3.right + 3.9f*Vector3.down + 1.5f*Vector3.back;
+                _toolTipGo.transform.parent = Camera.main.transform;
+                _toolTipGo.transform.localPosition = 3.22f*Vector3.right + -1.37f*Vector3.up + 4.11f*Vector3.forward;
             }
             SoundManager.Instance.PlayEffect(SoundManager.Instance.AudioEffects.OpenInventory, transform.position, 0.1f);
             _toolTipGo.transform.GetChild(1).GetChild(0).GetComponent<TextMeshProUGUI>().text = str;
@@ -496,6 +498,7 @@ namespace Game
         void OnDestroy()
         {
             Camera.main.GetComponent<CameraController>().Target = _prevCameraTarget;
+            Destroy(_toolTipGo);
         }
     }
 }
