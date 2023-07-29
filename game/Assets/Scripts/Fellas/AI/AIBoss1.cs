@@ -6,6 +6,13 @@ namespace Game
 {
     public class AIBoss1 : AIArcherSkilled
     {
+        protected override void AdditionalAwake()
+        {
+            base.AdditionalAwake();
+
+            Inventory.Arrows = 1000;
+        }
+
         private bool _phase1 = true;
 
         protected override bool DetectPlayer(float distance, out bool warnOthers)
@@ -50,7 +57,7 @@ namespace Game
 
         protected override void GotParriedEffect()
         {
-            if(_attacksInRow > 1)
+            if(_attacksInRow > 2)
             {
                 base.GotParriedEffect();
             }

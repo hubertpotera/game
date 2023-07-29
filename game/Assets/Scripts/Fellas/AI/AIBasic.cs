@@ -11,6 +11,8 @@ namespace Game
         private float _parryChance = 0.2f;
         [SerializeField]
         private float _chanceToFollowOthers = 0.2f;
+        [SerializeField]
+        private float _attackWaitMod = 1f;
 
         private float _weaveTimeOffset;
 
@@ -231,7 +233,7 @@ namespace Game
             {
                 Stance = FightStance.Offensive;
                 CallOthersToAttack();
-                _attackWaitTime = 1f + Random.value * 3f;
+                _attackWaitTime = _attackWaitMod * 1f + Random.value * 3f;
                 _timeSinceAttack = 0f;
                 _wantedAttacksInRow = (int)(1+Random.value*3.5f);
             }
@@ -314,6 +316,7 @@ namespace Game
 
         protected virtual void GotParriedEffect()
         {
+            _attacksInRow = 0;
             Stance = FightStance.Defensive;
             BlockActionsForTime(1f);
         }

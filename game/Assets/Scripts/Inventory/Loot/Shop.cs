@@ -56,8 +56,6 @@ namespace Game
         private Collider _colliderHeal;
         [SerializeField]
         private TextMeshProUGUI _healCost;
-        [SerializeField]
-        private TextMeshProUGUI _health;
 
         [Space]
         [SerializeField]
@@ -100,7 +98,6 @@ namespace Game
             yield return null;
             
             _inventoryDisplay.Player = Player;
-            _health.text = Player.Health.ToString() + "/" + Player.MaxHealth.ToString();
             UpdateCosts();
             SetItemShop();
 
@@ -140,7 +137,7 @@ namespace Game
                 Player.ChangeHealth(1000);
                 Destroy(_colliderHeal.gameObject);
                 Destroy(_healCost.gameObject);
-                _health.text = Player.Health.ToString() + "/" + Player.MaxHealth.ToString();
+                _inventoryDisplay.HealthDisplay.text = Player.Health.ToString() + "/" + Player.MaxHealth.ToString();
             }
 
             if(_colliderHead1.Raycast(mouseRay, out hit, Mathf.Infinity) && SpendTokens(_invProgression.Head1Upgrades[RunManager.Instance.Head1Level+1].Cost))
@@ -198,6 +195,7 @@ namespace Game
             {
                 if(ItemShop1.GetType() == typeof(ItemWeaponSO))
                 {
+                    Debug.Log(ItemShop1);
                     _inventoryDisplay.ShowWeaponToolTip((ItemWeaponSO)ItemShop1);
                 }
                 else
@@ -209,6 +207,7 @@ namespace Game
             {
                 if(ItemShop1.GetType() == typeof(ItemWeaponSO))
                 {
+                    Debug.Log(ItemShop2);
                     _inventoryDisplay.ShowWeaponToolTip((ItemWeaponSO)ItemShop2);
                 }
                 else

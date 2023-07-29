@@ -13,6 +13,8 @@ namespace Game
         public GameObject LootedItemGO;
         private Collider _lootedCollider;
         private MeshRenderer _lootedRenderer;
+        [SerializeField]
+        public TextMeshProUGUI HealthDisplay;
         
         [SerializeField]
         private GameObject _toolTipPrefab;
@@ -99,6 +101,7 @@ namespace Game
         {
             yield return null;
 
+            HealthDisplay.text = Player.Health.ToString() + "/" + Player.MaxHealth.ToString();
             Player.BlockInputs = true;
             if(LootedItemGO != null)
             {
