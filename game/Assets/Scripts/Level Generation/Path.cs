@@ -23,7 +23,7 @@ namespace Game
             LastDir = dir;
             
             // Decide the event
-            float bossChance = Mathf.Sqrt(RunManager.Instance.TotalKilled-10) * 0.25f;
+            float bossChance = Mathf.Sqrt(RunManager.Instance.KilledThisLevel-10) * 0.25f;
             if(areaCanBeShop && Random.value < 0.3f)
             {
                 PathEventPrefab = worldPrefabs.ShopArea;
@@ -41,7 +41,7 @@ namespace Game
             }
             else
             {
-                PathEventPrefab = worldPrefabs.ChooseCombatArea(RunManager.Instance.TotalKilled);
+                PathEventPrefab = worldPrefabs.ChooseCombatArea(RunManager.Instance.KilledThisLevel);
             }
         }
 
@@ -49,10 +49,11 @@ namespace Game
             ref Dictionary<Vector2Int, IMapBlock> map, ref List<Path> paths, ref List<Area> areas, Transform parent)
         {
             Vector2Int nextTile = LastTile + LastDir;
-            Vector2Int root = Backtrack(generationDist / 2, map, out bool foo);
+            Vector2Int root = Backtrack(generationDist / 2, map, out bool _);
 
             // Decide if this tile should be an event
-            if (areas.Count == 0 && CombatFella.AllTheFellas.Count == 1 && (!_isBossArea || LastDir.y == 0)) // Make sure if its a boss area it generates to the side
+            if (!RunManager.Instance.BossKilled && areas.Count == 0 && CombatFella.AllTheFellas.Count == 1 
+                && (!_isBossArea || LastDir.y == 0)) // Make sure if its a boss area it generates to the side
             {
                 paths.Remove(this);
                 areas.Add(new Area(LastTile, LastDir, PathEventPrefab, worldPrefabs, ref map, ref paths, parent));
@@ -67,7 +68,7 @@ namespace Game
 
                 // Add new tiles to the side, until the angle from player to tile excedes the path angle
                 float goingToTileAngle = -Vector2.SignedAngle(coordsChange, nextTile - root);
-                Vector2Int nextTileDir = Vector2Int.zero;
+                Vector2Int nextTileDir;
                 if (Mathf.Abs(goingToTileAngle) < Mathf.Abs(goingToPathAngle))
                 {
                     nextTileDir = Misc.RotateV2Int(coordsChange, Misc.Sign(goingToPathAngle));
@@ -93,7 +94,7 @@ namespace Game
             while(LastTile.x <= (playerPos.x - generationRange) || LastTile.x >= (playerPos.x + generationRange) 
                 || LastTile.y <= (playerPos.y - generationRange) || LastTile.y >= (playerPos.y + generationRange))
             {
-                Vector2Int newTile = Backtrack(1, map, out bool earlyEnd);
+                Vector2Int newTile = Backtrack(1, map, out bool _);
 
                 if (LastTile-newTile == Vector2Int.zero) 
                 {

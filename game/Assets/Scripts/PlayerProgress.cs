@@ -42,7 +42,7 @@ namespace Game
 
     public class Progression
     {
-        public int killedBosses = 0;
+        public int maxBossKilled = 0;
         
     }
 }

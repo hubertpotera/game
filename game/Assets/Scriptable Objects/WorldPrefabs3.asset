@@ -1,0 +1,53 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 32
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5072aa4a3c0438d49bc546f5df1ec2fa, type: 3}
+  m_Name: WorldPrefabs3
+  m_EditorClassIdentifier: 
+  TileEmpty:
+  - {fileID: 5891343408533217915, guid: ba2c02f440b43074baeef78a9f53d69c, type: 3}
+  TilePathStraight:
+  - {fileID: 4086348450680617455, guid: cce27681b16aad340a791e3d12fbbae3, type: 3}
+  TilePathTurn:
+  - {fileID: 1965783796778736456, guid: c4e24b56da86ef746964a6f48d31fd11, type: 3}
+  PlaceableTree:
+  - {fileID: 2842166566454041187, guid: f94cdd6d303b8c44a8e1d9918e150f7c, type: 3}
+  TilePathT:
+  - {fileID: 7189724107612048401, guid: 8a75e5f4fcfffce468028bec92573022, type: 3}
+  CombatAreas:
+  - Prefab: {fileID: 3265852350876070243, guid: f533cce6d259a0a4a84b05f56dc6dcbb,
+      type: 3}
+    KilledThreshhold: 3
+  - Prefab: {fileID: 2945063681417886570, guid: 49b12cc6678d24e499a5015407a9142f,
+      type: 3}
+    KilledThreshhold: 8
+  - Prefab: {fileID: 908286736037465134, guid: ff2d8775d8e44bd47ae45de20e92dda7, type: 3}
+    KilledThreshhold: 3
+  - Prefab: {fileID: 2673730065503228062, guid: 317d1c2d5f4e7e446b30a647002bf9dd,
+      type: 3}
+    KilledThreshhold: 0
+  - Prefab: {fileID: 7907262691248563882, guid: 4c0cbdee30e547f43857a8cc1a54c630,
+      type: 3}
+    KilledThreshhold: 1
+  - Prefab: {fileID: 6903816934867946016, guid: 664ddf736850db64c999fee753ef166b,
+      type: 3}
+    KilledThreshhold: 0
+  - Prefab: {fileID: 5518664510015889441, guid: 145c5df3424a22246a9235bb0819ab7c,
+      type: 3}
+    KilledThreshhold: 1
+  ShopArea: {fileID: 5738790181718230858, guid: 754799b53b63b4946b53afdd86f20380,
+    type: 3}
+  ShopIndicator: {fileID: 2652896511458024329, guid: d2c61eb4b5b516a429345226b0a02781,
+    type: 3}
+  BossArea: {fileID: 3710789477599333342, guid: 3fb218494bc576c458c1c2b2a02793e1,
+    type: 3}
+  BossIndicator: {fileID: 2224292511783149916, guid: 79ab98028d8215b4cad525c16df62f83,
+    type: 3}

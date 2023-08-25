@@ -52,6 +52,7 @@ namespace Game
             Shop shop = _shop.GetComponent<Shop>();
             InventoryDisplay inventoryDisplay = _shop.GetComponent<InventoryDisplay>();
 
+            Debug.Log(shop);
             shop.OnCloseShop += CloseShop;
             shop.Player = _player;
             inventoryDisplay.Player = _player;

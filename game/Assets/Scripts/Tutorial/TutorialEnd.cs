@@ -18,7 +18,7 @@ namespace Game
 
         private IEnumerator End()
         {
-            Camera.main.GetComponent<CameraController>().Black();
+            TheLight.Instance.Source.intensity = 0;
             Destroy(LevelGenerator.Instance.gameObject);
 
             yield return new WaitForSeconds(1);
@@ -26,7 +26,7 @@ namespace Game
             //TODO change scene or smthn idk
             //and remember [] you will fall
             
-            SceneManager.LoadScene("MainGame", LoadSceneMode.Single);
+            SceneManager.LoadScene("Level1", LoadSceneMode.Single);
         }
     }
 }

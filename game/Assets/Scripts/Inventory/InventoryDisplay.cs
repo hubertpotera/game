@@ -7,6 +7,8 @@ namespace Game
 {
     public class InventoryDisplay : MonoBehaviour
     {
+        public static bool Open = false;
+
         public PlayerController Player;
 
         public ItemSO LootedItem;
@@ -75,9 +77,11 @@ namespace Game
 
         private void Awake()
         {
+            Open = true;
+
             _prevCameraTarget = Camera.main.GetComponent<CameraController>().Target;
             Camera.main.GetComponent<CameraController>().Target = _cameraTarget;
-            SoundManager.Instance.PlayEffect(SoundManager.Instance.AudioEffects.OpenInventory, transform.position, 0.2f);
+            SoundManager.Instance.PlayEffect(SoundManager.Instance.AudioEffects.OpenInventory, 0.2f);
 
             _invProgression = Resources.Load<InventoryProgressionSO>("InventoryProgression");
 
@@ -101,7 +105,6 @@ namespace Game
         {
             yield return null;
 
-            HealthDisplay.text = Player.Health.ToString() + "/" + Player.MaxHealth.ToString();
             Player.BlockInputs = true;
             if(LootedItemGO != null)
             {
@@ -168,6 +171,8 @@ namespace Game
             SetDisplay(_item2Renderer, Player.Inventory.Item2);
             SetDisplay(_item3Renderer, Player.Inventory.Item3);
             SetDisplay(_item4Renderer, Player.Inventory.Item4);
+            // Update health
+            HealthDisplay.text = Player.Health.ToString() + "/" + Player.MaxHealth.ToString();
         }
 
         public void SetDisplay(MeshRenderer meshRenderer, ItemSO item)
@@ -200,7 +205,7 @@ namespace Game
 
         private Texture2D CombineTextures(Texture2D one, Texture2D two)
         {
-            Texture2D result = new Texture2D(one.width, one.height);
+            Texture2D result = new(one.width, one.height);
             
             result.LoadRawTextureData(one.GetRawTextureData());
 
@@ -319,7 +324,7 @@ namespace Game
                 _toolTipGo.transform.parent = Camera.main.transform;
                 _toolTipGo.transform.localPosition = 3.22f*Vector3.right + -1.37f*Vector3.up + 4.11f*Vector3.forward;
             }
-            SoundManager.Instance.PlayEffect(SoundManager.Instance.AudioEffects.OpenInventory, transform.position, 0.1f);
+            SoundManager.Instance.PlayEffect(SoundManager.Instance.AudioEffects.OpenInventory, 0.1f);
             _toolTipGo.transform.GetChild(1).GetChild(0).GetComponent<TextMeshProUGUI>().text = str;
         }
 
@@ -386,7 +391,7 @@ namespace Game
             }
             else return;
 
-            SoundManager.Instance.PlayEffect(SoundManager.Instance.AudioEffects.Parry[0], transform.position, 0.05f);
+            SoundManager.Instance.PlayEffect(SoundManager.Instance.AudioEffects.Parry[0], 0.05f);
         }
 
         private void Drop()
@@ -489,7 +494,7 @@ namespace Game
             }
             
             if(_dragged != null)
-                SoundManager.Instance.PlayEffect(SoundManager.Instance.AudioEffects.Parry[1], transform.position, 0.05f);
+                SoundManager.Instance.PlayEffect(SoundManager.Instance.AudioEffects.Parry[1], 0.05f);
             
             _dragged.GetComponent<Collider>().enabled = true;
             _dragged.transform.position = _draggedStartPosition;
@@ -500,6 +505,7 @@ namespace Game
 
         void OnDestroy()
         {
+            Open = false;
             Camera.main.GetComponent<CameraController>().Target = _prevCameraTarget;
             Destroy(_toolTipGo);
         }

@@ -216,7 +216,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   ItemStats: {fileID: 0}
-  DamageMod: 1
+  RampageDamageMod: 1
+  BloodRageDamageMod: 1
   _damageArea: {fileID: 6794940940271640960}
 --- !u!54 &-8075669260458271746
 Rigidbody:

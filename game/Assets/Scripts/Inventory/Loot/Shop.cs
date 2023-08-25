@@ -195,7 +195,6 @@ namespace Game
             {
                 if(ItemShop1.GetType() == typeof(ItemWeaponSO))
                 {
-                    Debug.Log(ItemShop1);
                     _inventoryDisplay.ShowWeaponToolTip((ItemWeaponSO)ItemShop1);
                 }
                 else
@@ -205,9 +204,8 @@ namespace Game
             }
             else if(ItemShop2 != null && _colliderItemShop2 != null && _colliderItemShop2.Raycast(mouseRay, out hit, Mathf.Infinity))
             {
-                if(ItemShop1.GetType() == typeof(ItemWeaponSO))
+                if(ItemShop2.GetType() == typeof(ItemWeaponSO))
                 {
-                    Debug.Log(ItemShop2);
                     _inventoryDisplay.ShowWeaponToolTip((ItemWeaponSO)ItemShop2);
                 }
                 else
@@ -266,7 +264,7 @@ namespace Game
         {
             if(RunManager.Instance.Killed.Count < n) return false;
 
-            SoundManager.Instance.PlayEffect(SoundManager.Instance.AudioEffects.Coins, transform.position, 0.5f);
+            SoundManager.Instance.PlayEffect(SoundManager.Instance.AudioEffects.Coins, 0.5f);
             
             for (int i = 0; i < n; i++)
             {

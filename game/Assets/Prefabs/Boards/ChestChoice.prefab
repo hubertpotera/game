@@ -30,7 +30,7 @@ Transform:
   m_LocalScale: {x: 3, y: 2.4999998, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 8598700059327964586}
+  m_Father: {fileID: 4054704936778644712}
   m_RootOrder: -1
   m_LocalEulerAnglesHint: {x: 90, y: 0, z: 0}
 --- !u!33 &1425828425017691766
@@ -114,7 +114,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 1
   m_Children: []
-  m_Father: {fileID: 8598700059327964586}
+  m_Father: {fileID: 4054704936778644712}
   m_RootOrder: -1
   m_LocalEulerAnglesHint: {x: 90, y: 0, z: 0}
 --- !u!33 &5653664911684793661
@@ -202,6 +202,16 @@ PrefabInstance:
       propertyPath: LootedItemGO
       value: 
       objectReference: {fileID: 6432140467431153357}
+    - target: {fileID: 1042202340126870612, guid: bd1e2ef8c262d98478ebb47090b2a721,
+        type: 3}
+      propertyPath: LootedItemGO
+      value: 
+      objectReference: {fileID: 6432140467431153357}
+    - target: {fileID: 1736825745337228243, guid: bd1e2ef8c262d98478ebb47090b2a721,
+        type: 3}
+      propertyPath: m_Name
+      value: ChestChoice
+      objectReference: {fileID: 0}
     - target: {fileID: 1889965006951639645, guid: bd1e2ef8c262d98478ebb47090b2a721,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -277,22 +287,32 @@ PrefabInstance:
       propertyPath: m_Name
       value: ChestChoice
       objectReference: {fileID: 0}
+    - target: {fileID: 8312718786246359421, guid: bd1e2ef8c262d98478ebb47090b2a721,
+        type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 4.12
+      objectReference: {fileID: 0}
+    - target: {fileID: 8312718786246359421, guid: bd1e2ef8c262d98478ebb47090b2a721,
+        type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0.52
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects:
-    - targetCorrespondingSourceObject: {fileID: 3335919700361342767, guid: bd1e2ef8c262d98478ebb47090b2a721,
+    - targetCorrespondingSourceObject: {fileID: 7014952106438882925, guid: bd1e2ef8c262d98478ebb47090b2a721,
         type: 3}
       insertIndex: -1
       addedObject: {fileID: 9125120087303067955}
-    - targetCorrespondingSourceObject: {fileID: 3335919700361342767, guid: bd1e2ef8c262d98478ebb47090b2a721,
+    - targetCorrespondingSourceObject: {fileID: 7014952106438882925, guid: bd1e2ef8c262d98478ebb47090b2a721,
         type: 3}
       insertIndex: -1
       addedObject: {fileID: 8757174850551681123}
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: bd1e2ef8c262d98478ebb47090b2a721, type: 3}
---- !u!4 &8598700059327964586 stripped
+--- !u!4 &4054704936778644712 stripped
 Transform:
-  m_CorrespondingSourceObject: {fileID: 3335919700361342767, guid: bd1e2ef8c262d98478ebb47090b2a721,
+  m_CorrespondingSourceObject: {fileID: 7014952106438882925, guid: bd1e2ef8c262d98478ebb47090b2a721,
     type: 3}
   m_PrefabInstance: {fileID: 6421897147773110917}
   m_PrefabAsset: {fileID: 0}

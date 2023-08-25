@@ -45,7 +45,7 @@ GameObject:
   - component: {fileID: 3878894888518394944}
   - component: {fileID: 5144407365624141646}
   - component: {fileID: 280310259050354848}
-  m_Layer: 0
+  m_Layer: 2
   m_Name: activator
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -102,11 +102,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4138f9358a8439c4db251c34c3b078cf, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _chestChoicePrefab: {fileID: 3022793881602209698, guid: 9665d4ac291e58c47a626f01e7c76bf0,
+  _chestChoicePrefab: {fileID: 4685248561867673942, guid: 9665d4ac291e58c47a626f01e7c76bf0,
     type: 3}
   _possibleContents: []
-  _minItemQuality: 1
-  _maxItemQuality: 3
+  _itemQualities: 
   _weaponEffects: 
   _loot: {fileID: 0}
 --- !u!1 &6861286384833348986

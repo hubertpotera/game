@@ -8,19 +8,20 @@ namespace Game
     public class AudioEffectsSO : ScriptableObject
     {
         [Header("Combat")]
-        public List<AudioClip> Windup = new List<AudioClip>();
-        public List<AudioClip> Swing = new List<AudioClip>();
-        public List<AudioClip> Hit = new List<AudioClip>();
-        public List<AudioClip> Parry = new List<AudioClip>();
+        public List<AudioClip> Windup = new();
+        public List<AudioClip> Swing = new();
+        public List<AudioClip> Hit = new();
+        public List<AudioClip> Parry = new();
         
-        public List<AudioClip> BowDraw = new List<AudioClip>();
-        public List<AudioClip> BowRelease = new List<AudioClip>();
-        public List<AudioClip> BowHit = new List<AudioClip>();
+        public List<AudioClip> BowDraw = new();
+        public List<AudioClip> BowRelease = new();
+        public List<AudioClip> BowHit = new();
 
         [Header("General")]
-        public List<AudioClip> Step = new List<AudioClip>();
+        public List<AudioClip> Step = new();
         public AudioClip OpenInventory;
         public AudioClip Coins;
+        public AudioClip GateRumble;
 
     }
 }

@@ -1,0 +1,27 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 930f16d2543e2c7439b75b83397ace94, type: 3}
+  m_Name: _boss 3 greatsword
+  m_EditorClassIdentifier: 
+  Texture: {fileID: 2800000, guid: beaecc01a6ee69b4cb45c6213f1bbfd9, type: 3}
+  ItemQuality: 0
+  Description: Greatsword:<br>Starts slow but is more effective the more attacks
+    in a row you perform.
+  WeaponPrefab: {fileID: 4610090049163595606, guid: 51c56c0a906ebce4bb130b9fabfb1054,
+    type: 3}
+  ThreatRange: 1.3
+  ArmourPenetration: 0.091
+  BaseDamage: 8
+  BaseSwingTime: 0.8
+  BaseAttackRecoveryTime: 0.4
+  BaseParryRecoveryTime: 0.1
+  WeaponEffect: 0

@@ -15,7 +15,12 @@ namespace Game
         
         public void PlayGame()
         {
-            SceneManager.LoadScene("MainGame", LoadSceneMode.Single);
+            SceneManager.LoadScene("Level1", LoadSceneMode.Single);
+        }
+
+        public void Exit()
+        {
+            Application.Quit();
         }
     }
 }

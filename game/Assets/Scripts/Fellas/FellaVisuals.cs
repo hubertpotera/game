@@ -9,6 +9,7 @@ namespace Game
         public MeshRenderer LadRenderer;
 
         private GameObject _hitParticles;
+        private GameObject _parryParticles;
 
         private Inventory _inventory;
         
@@ -19,7 +20,8 @@ namespace Game
 
         private void Awake()
         {
-            _hitParticles = Resources.Load<GameObject>("FX/Damage/Hit Particles");
+            _hitParticles = Resources.Load<GameObject>("FX/Hit Particles");
+            _parryParticles = Resources.Load<GameObject>("FX/Parry Particles");
             UpdateBlood(1,1);
             
             _inventory = GetComponent<Inventory>();
@@ -34,6 +36,12 @@ namespace Game
             // Blood particles
             float angle = Mathf.Atan2(dir.x,dir.z) * Mathf.Rad2Deg;
             GameObject go = Instantiate(_hitParticles, transform.position, Quaternion.Euler(0f, angle, 0f));
+            Destroy(go, 2);
+        }
+
+        public void ParryEffects(Vector3 dir)
+        {
+            GameObject go = Instantiate(_parryParticles, transform.position + dir + 0.6f*Vector3.up, Quaternion.identity);
             Destroy(go, 2);
         }
 
@@ -90,6 +98,14 @@ namespace Game
             go4.transform.parent = LadRenderer.transform;
             UpdateDisplays();
             return;
+        }
+
+        public void DestroyArmourDisplays()
+        {
+            for (int i = 0; i < LadRenderer.transform.childCount; i++)
+            {
+                Destroy(LadRenderer.transform.GetChild(i).gameObject);
+            }
         }
 
         private Material CreateArmorDisplay(float height, string name, out GameObject createdDisplay)

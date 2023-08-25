@@ -17,7 +17,7 @@ MonoBehaviour:
   Description: Spear:<br>Nimble and longer range.
   WeaponPrefab: {fileID: 3558126594483730671, guid: 620f3a14a19692d43bf13bb40986aa0c,
     type: 3}
-  ThreatRange: 2.5
+  ThreatRange: 2
   ArmourPenetration: 0
   BaseDamage: 5
   BaseSwingTime: 0.6

@@ -128,6 +128,25 @@ namespace Game
                 || playerPos.y <= southWestLimit.y || playerPos.y >= northEastLimit.y))
                 return false;
 
+            Destroy(ref pathsReference, ref map);
+
+            // Creating a path instead
+            float angle = -Vector2.SignedAngle(Vector2.up, -goingDir);
+            bool shopIsBeingCreated = false;
+            foreach (var path in pathsReference)
+            {
+                if(path.EventIndicator != null && path.PathEventPrefab.name.Contains("Shop"))
+                {
+                    shopIsBeingCreated = true;
+                }
+            }
+            pathsReference.Add(new Path(nonRetractedEntrances[0], angle, -goingDir, worldPrefabs, !shopIsBeingCreated));
+
+            return true;
+        }
+
+        public void Destroy(ref List<Path> pathsReference, ref Dictionary<Vector2Int, IMapBlock> map)
+        {
             // Deleting the GameObject
             Object.Destroy(_go);
 
@@ -151,23 +170,10 @@ namespace Game
                 }
             }
 
-            // Creating a path instead
-            float angle = -Vector2.SignedAngle(Vector2.up, -goingDir);
-            bool shopIsBeingCreated = false;
-            foreach (var path in pathsReference)
-            {
-                if(path.EventIndicator != null && path.PathEventPrefab.name.Contains("Shop"))
-                {
-                    shopIsBeingCreated = true;
-                }
-            }
-            pathsReference.Add(new Path(nonRetractedEntrances[0], angle, -goingDir, worldPrefabs, !shopIsBeingCreated));
-
-            return true;
         }
 
         public void Delete(ref Dictionary<Vector2Int, IMapBlock> map) { }
-        public void PlaceTree(WorldPrefabsSO worldPrefabs, int treeRange) { }
+        public void PlaceTree(WorldPrefabsSO worldPrefabs, int treeRange, Transform parent) { }
         public void RemovePlaceable() { }
     }
 }

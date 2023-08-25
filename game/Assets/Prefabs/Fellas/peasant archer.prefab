@@ -290,6 +290,7 @@ MonoBehaviour:
   LookRot: 0
   _parryChance: 0.1
   _chanceToFollowOthers: 0.2
+  _attackWaitMod: 1
   SpawnDestroyed: 0
   Stance: 0
 --- !u!114 &2210620337278708665

@@ -21,7 +21,7 @@ namespace Game
         {
             if(!Recovering && transform.parent.GetComponent<Inventory>().Arrows > 0)
             {
-                SoundManager.Instance.PlayRandomEffect(SoundManager.Instance.AudioEffects.BowDraw, transform.position);
+                SoundManager.Instance.PlayRandomEffect(SoundManager.Instance.AudioEffects.BowDraw);
                 _animator.SetBool("drawing", true);
                 _drawStartTime = Time.time;
                 Attacking= true;
@@ -32,9 +32,10 @@ namespace Game
 
         public override void AttackLetGo()
         {
+            SoundManager.Instance.StopEffects();
             if(_drawStartTime > 0f && Time.time-_drawStartTime >= SwingTime)
             {
-                SoundManager.Instance.PlayRandomEffect(SoundManager.Instance.AudioEffects.BowRelease, transform.position);
+                SoundManager.Instance.PlayRandomEffect(SoundManager.Instance.AudioEffects.BowRelease);
                 _animator.SetTrigger("shoot");
                 StartCoroutine(Recover(AttackRecoveryTime));
                 
@@ -51,6 +52,7 @@ namespace Game
 
         public override void GetInterupted(bool interuptAnimation)
         {
+            SoundManager.Instance.StopEffects();
             _drawStartTime = 0f;
             Attacking= false;
         }

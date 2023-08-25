@@ -36,7 +36,7 @@ namespace Game
         public override bool Use()
         {
             _particlesGO.SetActive(true);
-            SoundManager.Instance.PlayEffect(SoundManager.Instance.AudioEffects.Step[0], transform.position);
+            SoundManager.Instance.PlayEffect(SoundManager.Instance.AudioEffects.Step[0]);
 
             foreach (var target in _targets)
             {

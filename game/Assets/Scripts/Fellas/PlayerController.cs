@@ -16,6 +16,9 @@ namespace Game
 
         public event Interaction OnInteraction;
         public delegate void Interaction();
+        
+        [SerializeField]
+        public Transform CameraTarget;
 
         [SerializeField]
         private GameObject _inventoryPrefab;
@@ -27,6 +30,7 @@ namespace Game
             Type = FellaType.Player;
 
             _camera = Camera.main;
+            _camera.GetComponent<CameraController>().Target = CameraTarget;
 
             Inventory.Arrows = 10000; //TEMP 
 
@@ -50,7 +54,7 @@ namespace Game
 
         protected override void Decide()
         {
-            if(BlockInputs) 
+            if(BlockInputs || PauseControl.Paused) 
             {
                 MovementDir = Vector3.zero;
                 return;
@@ -117,20 +121,7 @@ namespace Game
 
         protected override void Die()
         {
-            StartCoroutine(Dying());
-        }
-
-        private IEnumerator Dying()
-        {
-            //TODO move to run manager???
-            Camera.main.GetComponent<CameraController>().Black();
-            for (int i = 0; i < AllTheFellas.Count; i++)
-            {
-                // AllTheFellas[i].gameObject.SetActive(false);
-                Destroy(AllTheFellas[i].gameObject);
-            }
-            yield return new WaitForSeconds(2f);
-            UnityEngine.SceneManagement.SceneManager.LoadScene("Menu", UnityEngine.SceneManagement.LoadSceneMode.Single);
+            RunManager.Instance.PlayerDeath();
         }
 
         protected override void Dash(Vector3 dir)
@@ -162,9 +153,18 @@ namespace Game
         public override void ChangeHealth(int change)
         {
             base.ChangeHealth(change);
+            if(RunManager.Instance.UsingBloodRage && Inventory.Weapon != null)
+            {
+                Inventory.Weapon.BloodRageDamageMod = 2f - Health/MaxHealth;
+            }
+        }
+
+        protected override void SwapWeapons()
+        {
+            base.SwapWeapons();
             if(RunManager.Instance.UsingBloodRage)
             {
-                Inventory.Weapon.SkillDamageMod = 1.5f - 0.5f*Health/MaxHealth;
+                Inventory.Weapon.BloodRageDamageMod = 2f - Health/MaxHealth;
             }
         }
 
@@ -175,13 +175,13 @@ namespace Game
                 if(Time.time - _lastAttackTime < 1.2f*(Inventory.Weapon.SwingTime+Inventory.Weapon.WindupTime+Inventory.Weapon.AttackRecoveryTime))
                 {
                     StartCoroutine(Inventory.Weapon.BoostNextAttackCoroutine(Mathf.Pow(0.9f, _attacksInRow), 0.3f));
-                    Inventory.Weapon.SkillDamageMod = Mathf.Pow(1.05f, _attacksInRow);
+                    Inventory.Weapon.RampageDamageMod = Mathf.Pow(1.05f, _attacksInRow);
                     _attacksInRow = Mathf.Min(_attacksInRow+1, 4);
                 }
                 else
                 {
                     _attacksInRow = 0;
-                    Inventory.Weapon.SkillDamageMod = 1f;
+                    Inventory.Weapon.RampageDamageMod = 1f;
                 }
                 _lastAttackTime = Time.time;
             }

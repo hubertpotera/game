@@ -105,7 +105,7 @@ namespace Game
             return worldPrefabs.TileEmpty[0];
         }
         
-        public void PlaceTree(WorldPrefabsSO worldPrefabs, int treeRange)
+        public void PlaceTree(WorldPrefabsSO worldPrefabs, int treeRange, Transform parent)
         {
             // Instanciate tree pool
             if(_treePool == null)
@@ -114,6 +114,7 @@ namespace Game
                 for (int i = 0; i < treeRange*treeRange; i++)
                 {
                     _treePool.Add(GameObject.Instantiate(WorldPrefabsSO.RandomGOFromList(worldPrefabs.PlaceableTree)));
+                    _treePool[i].transform.parent = parent;
                     _treePool[i].SetActive(false);  
                     _treePool[i].transform.localScale = _go.transform.localScale;
                 }

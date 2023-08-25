@@ -46,6 +46,7 @@ namespace Game
                     {
                         transform.SetParent(hit.transform, true);
                         Weapon.DealDamage(WeaponStats, 1, Holder, hitFella);
+                        StartCoroutine(DestroyAfterDelay(10f));
                     }
                     else
                     {

@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 namespace Game
 {
@@ -21,12 +22,16 @@ namespace Game
                 Destroy(gameObject);
                 return;
             }
+            DontDestroyOnLoad(gameObject);
         }
+
+        public bool BossKilled = false;
         
         public bool UsingDashInvulnerability = false;   // I-frames on dash
         public bool UsingRiposte = false;               // Fast attack after parry
         public bool UsingBloodRage = false;             // More damage, speed at low hp
         public bool UsingRampage = false;               // each next attack is faster
+        public bool PerksChosen = false;
 
         public int Head1Level = -1;
         public int Head2Level = -1;
@@ -34,8 +39,68 @@ namespace Game
         public int Body2Level = -1;
 
         public int TotalKilled = 0;
+        public int KilledThisLevel = 0;
         
         public List<string> Killed = new List<string>();
+
+        public void NextLevel(GameObject player, string levelName, float lightTemperature)
+        {
+            StartCoroutine(ChangeLevel(player, levelName, lightTemperature));
+        }
+
+        private IEnumerator ChangeLevel(GameObject player, string levelName, float lightTemperature)
+        {
+            KilledThisLevel = 0;
+            TheLight.Instance.Source.color = Color.black;
+
+            Scene currentScene = SceneManager.GetActiveScene();
+
+            Destroy(SoundManager.Instance.gameObject);
+            Destroy(LevelGenerator.Instance.gameObject);
+            Destroy(Camera.main.gameObject);
+            player.GetComponent<Inventory>().DestroyHolders();
+            player.SetActive(false);
+            player.GetComponent<FellaVisuals>().DestroyArmourDisplays();
+            AsyncOperation asyncOperation = SceneManager.LoadSceneAsync(levelName, LoadSceneMode.Additive);
+
+            while (!asyncOperation.isDone)
+            {
+                yield return null;
+            }
+
+            yield return new WaitForSeconds(2);
+            
+            SceneManager.SetActiveScene(SceneManager.GetSceneByName(levelName));
+            player = Instantiate(player, Vector3.zero, Quaternion.identity);
+            player.SetActive(true);
+            LevelGenerator.Instance.Player = player.transform;
+            asyncOperation = SceneManager.UnloadSceneAsync(currentScene);
+            
+            while (!asyncOperation.isDone)
+            {
+                yield return null;
+            }
+
+            TheLight.Instance.Source.color = Color.white;
+            TheLight.Instance.Source.colorTemperature = lightTemperature;
+        }
+
+        public void PlayerDeath()
+        {
+            StartCoroutine(DeathSequence());
+        }
+
+        private IEnumerator DeathSequence()
+        {
+            TheLight.Instance.Source.color = Color.black;
+            for (int i = 0; i < CombatFella.AllTheFellas.Count; i++)
+            {
+                Destroy(CombatFella.AllTheFellas[i].gameObject);
+            }
+            yield return new WaitForSeconds(2f);
+            SceneManager.LoadScene("Menu", UnityEngine.SceneManagement.LoadSceneMode.Single);
+            Destroy(gameObject);
+        }
 
         public void AddKilled(CombatFella lad)
         {
@@ -46,6 +111,7 @@ namespace Game
 
             Killed.Add(Misc.BytesToString(bytes));
             TotalKilled += 1;
+            KilledThisLevel += 1;
         }
 
         private Texture2D CombineTextures(Texture2D token, Inventory inventory)

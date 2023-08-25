@@ -6,15 +6,17 @@ namespace Game
 {
     public class ActiveSpiceBuff : EffectItem
     {
+        [SerializeField]
+        private ParticleSystem _particles;
+
         public override bool Use()
         {
-            _holder.Inventory.ApplyItemEffects();
-
             _holder.ItemAttackSpeedMod *= 1f + ((int)_item.ItemQuality*0.1f);
             _holder.ItemDashCooldownMod *= 1f - ((int)_item.ItemQuality*0.1f);
             _holder.ItemDashDistMod *= 1f + ((int)_item.ItemQuality*0.1f);
             _holder.ItemSpeedMod *= 1f + ((int)_item.ItemQuality*0.1f);
             _holder.Inventory.Weapon.UpdateParameters();
+            _particles.Play();
 
             StartCoroutine(DestroyAfterDelay());
 
@@ -25,7 +27,8 @@ namespace Game
         {
             yield return new WaitForSeconds(2f + 2f*(int)_item.ItemQuality);
             _holder.Inventory.ApplyItemEffects();
-            Destroy(this);
+            Debug.Log("edn");
+            Destroy(gameObject);
         }
     }
 }

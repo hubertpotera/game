@@ -170,7 +170,7 @@ namespace Game
             if(_decidedToSwitchWeapons)
             {
                 _decidedToSwitchWeapons = false;
-                Inventory.SwapWeapons();
+                SwapWeapons();
             }
             if (_decidedToAttack)
             {
@@ -202,6 +202,11 @@ namespace Game
                     StartCoroutine(ParryCooldown(.7f));
                 }
             }
+        }
+
+        protected virtual void SwapWeapons()
+        {
+            Inventory.SwapWeapons();
         }
 
         protected void StartInvulnerability(float t)
@@ -245,6 +250,7 @@ namespace Game
         protected virtual void SuccessfulParry()
         {
             StartInvulnerability(0.2f);
+            Visuals.ParryEffects(Quaternion.Euler(0f, LookRot, 0f) * Vector3.forward);
         }
 
         protected virtual void Dash(Vector3 dir)
@@ -314,7 +320,7 @@ namespace Game
 
         public void StepSound()
         {
-            SoundManager.Instance.PlayRandomEffect(SoundManager.Instance.AudioEffects.Step, transform.position, 0.3f);
+            SoundManager.Instance.PlayRandomEffect(SoundManager.Instance.AudioEffects.Step, 0.1f);
         }
     }
 }

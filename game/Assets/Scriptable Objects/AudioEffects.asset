@@ -54,3 +54,4 @@ MonoBehaviour:
   - {fileID: 8300000, guid: ee147a403bff80f46a388c53f05b193e, type: 3}
   OpenInventory: {fileID: 8300000, guid: 604ce6caddfe6d642a327285f88e5df5, type: 3}
   Coins: {fileID: 8300000, guid: 5d67f6c1355aaa3409f4c771b5c5c129, type: 3}
+  GateRumble: {fileID: 8300000, guid: a4b63e44fdcc1ac49bd6e9af305a1d88, type: 3}

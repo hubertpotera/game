@@ -15,5 +15,5 @@ MonoBehaviour:
   Texture: {fileID: 2800000, guid: c84c43090afff1a4688d85fc702db4e6, type: 3}
   ItemQuality: 0
   Description: ONE USE<BR>Spice:<br>Use to gain a short buff on every stat.
-  PrefabWithEffect: {fileID: 4820803686656547708, guid: bd4c52bc5ab929840af86115408fc861,
+  PrefabWithEffect: {fileID: 9204701936203069647, guid: bd4c52bc5ab929840af86115408fc861,
     type: 3}

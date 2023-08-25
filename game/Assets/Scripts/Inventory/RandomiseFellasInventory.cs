@@ -57,6 +57,8 @@ namespace Game
             inventory.Head2 = (ItemArmorSO)Choose(_head2Choices);
             inventory.Body1 = (ItemArmorSO)Choose(_body1Choices);
             inventory.Body2 = (ItemArmorSO)Choose(_body2Choices);
+
+            Destroy(this);
         }
 
         private ItemSO Choose(List<Choice> choices)

@@ -16,15 +16,13 @@ namespace Game
             }
             else
             {
-                Debug.LogError("another singleton matey");
-                Destroy(gameObject);
-                return;
+                Debug.LogError("replacing level gen");
+                Destroy(Instance.gameObject);
             }
-
-            if(_player == null) return;
 
             _paths= new List<Path>();
             _areas= new List<Area>();
+
             GenerateStart();
         }
 
@@ -32,8 +30,7 @@ namespace Game
         private WorldPrefabsSO _prefabs;
 
         [Space]
-        [SerializeField]
-        private Transform _player;
+        public Transform Player;
         [SerializeField]
         private int _generationDist = 16;
         [SerializeField]
@@ -53,9 +50,9 @@ namespace Game
 
         private void Update() 
         {
-            if(_player == null) return;
+            if(Player == null) return;
             
-            Vector2Int playerCoords = PosToCoords(_player.position);
+            Vector2Int playerCoords = PosToCoords(Player.position);
             if(playerCoords != _prevPlayerCoords)
             {
                 UpdateMap(_prevPlayerCoords, playerCoords);
@@ -64,6 +61,26 @@ namespace Game
         }
 
 
+
+        public void Regenerate()
+        {
+            _prevPlayerCoords = Vector2Int.zero;
+
+            Tile.ClearTreePool();
+            foreach(Transform child in transform)
+            {
+                Destroy(child.gameObject);
+            }
+            
+            foreach (var area in _areas)
+            {
+                area.Destroy(ref _paths, ref _map);
+            }
+            _areas= new List<Area>();
+            _paths= new List<Path>();
+
+            GenerateStart();
+        }
 
         private void UpdateMap(Vector2Int prevCoords, Vector2Int newCoords)
         {
@@ -77,27 +94,27 @@ namespace Game
                 for (int i = 0; i < Mathf.Abs(coordsChange.x); i++)
                 {
                     UpdateMap(coord, coord + Vector2Int.right * dirX);
-                    coord = coord + Vector2Int.right * dirX;
+                    coord += Vector2Int.right * dirX;
                 }
                 for (int i = 0; i < Mathf.Abs(coordsChange.y); i++)
                 {
                     UpdateMap(coord, coord + Vector2Int.up * dirY);
-                    coord = coord + Vector2Int.up * dirY;
+                    coord += Vector2Int.up * dirY;
                 }
                 return;
             }
 
-            List<Vector2Int> toDelete = new List<Vector2Int>();
-            List<Vector2Int> toCreate = new List<Vector2Int>();
-            if(coordsChange.y == 0) // Horizonatal movement
+            List<Vector2Int> toCreate;
+            List<Vector2Int> toDelete;
+            if (coordsChange.y == 0) // Horizonatal movement
             {
-                toDelete = GetVerticalLine(newCoords - coordsChange*_generationDist, _generationDist);
-                toCreate = GetVerticalLine(newCoords + coordsChange*(_generationDist-1), _generationDist);
+                toDelete = GetVerticalLine(newCoords - coordsChange * _generationDist, _generationDist);
+                toCreate = GetVerticalLine(newCoords + coordsChange * (_generationDist - 1), _generationDist);
             }
             else // Vertical movement
             {
-                toDelete = GetHorizontalLine(newCoords - coordsChange*_generationDist, _generationDist);
-                toCreate = GetHorizontalLine(newCoords + coordsChange*(_generationDist-1), _generationDist);
+                toDelete = GetHorizontalLine(newCoords - coordsChange * _generationDist, _generationDist);
+                toCreate = GetHorizontalLine(newCoords + coordsChange * (_generationDist - 1), _generationDist);
             }
 
             // Remove all unimportant (empty) tiles
@@ -123,10 +140,13 @@ namespace Game
             }
 
             // Forgeting areas
-            for (int i = 0; i < _areas.Count; i++)
+            if(!RunManager.Instance.BossKilled)
             {
-                if(_areas[i].ConciderDeletion(newCoords, coordsChange, _generationDist, ref _paths, ref _map, _prefabs))
-                    _areas.RemoveAt(i);
+                for (int i = 0; i < _areas.Count; i++)
+                {
+                    if(_areas[i].ConciderDeletion(newCoords, coordsChange, _generationDist, ref _paths, ref _map, _prefabs))
+                        _areas.RemoveAt(i);
+                }
             }
 
             // Fill the rest with empty tiles
@@ -141,8 +161,8 @@ namespace Game
 
         private void PlaceTrees(Vector2Int coordsChange, Vector2Int newCoords)
         {
-            List<Vector2Int> toDelete = new List<Vector2Int>();
-            List<Vector2Int> toCreate = new List<Vector2Int>();
+            List<Vector2Int> toDelete;
+            List<Vector2Int> toCreate;
             if (coordsChange.y == 0) // Horizonatal movement
             {
                 toDelete = GetVerticalLine(newCoords - coordsChange * (_generationDist - _treeDistFromPath), _generationDist - _treeDistFromPath);
@@ -171,7 +191,7 @@ namespace Game
                     if (!valid) break;
                 }
                 if (!valid) continue;
-                _map[toCreate[i]].PlaceTree(_prefabs, (_generationDist-_treeDistFromPath)*2-1);
+                _map[toCreate[i]].PlaceTree(_prefabs, (_generationDist-_treeDistFromPath)*2-1, transform);
             }
 
             for (int i = 0; i < toDelete.Count; i++)
@@ -182,18 +202,16 @@ namespace Game
 
         private void GenerateStart()
         {
-            Vector2Int playerCoords = PosToCoords(_player.position);
-
             _map = new Dictionary<Vector2Int, IMapBlock>();
             for (int x = -_generationDist + 1; x < _generationDist; x++)
             {
                 for (int y = -_generationDist + 1; y < _generationDist; y++)
                 {
-                    Vector2Int coords = playerCoords + new Vector2Int(x, y);
+                    Vector2Int coords = new(x, y);
 
                     if (x == 0) _map.Add(coords, new Tile(coords, IMapBlock.BlockType.Path, new Vector2Int[] { Vector2Int.up, Vector2Int.down }, _prefabs, transform));
                     else _map.Add(coords, new Tile(coords, IMapBlock.BlockType.Empty, new Vector2Int[0], _prefabs, transform));
-                    if(Mathf.Abs(x)>1 && Mathf.Abs(x)<5 && Mathf.Abs(y)<5) _map[coords].PlaceTree(_prefabs, (_generationDist-_treeDistFromPath)*2-1);
+                    if(Mathf.Abs(x)>1 && Mathf.Abs(x)<5 && Mathf.Abs(y)<5) _map[coords].PlaceTree(_prefabs, (_generationDist-_treeDistFromPath)*2-1, transform);
                 }
             }
 
@@ -242,6 +260,7 @@ namespace Game
         void OnDestroy()
         {
             Tile.ClearTreePool();
+            Instance = null;
         }
         
         private void OnValidate() 

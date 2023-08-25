@@ -6,14 +6,14 @@ namespace Game
 {
     public class AIBoss1 : AIArcherSkilled
     {
+        private bool _phase1 = true;
+
         protected override void AdditionalAwake()
         {
             base.AdditionalAwake();
 
             Inventory.Arrows = 1000;
         }
-
-        private bool _phase1 = true;
 
         protected override bool DetectPlayer(float distance, out bool warnOthers)
         {
@@ -72,6 +72,16 @@ namespace Game
                 _decidedToSwitchWeapons = true;
                 Stance = FightStance.Defensive;
             }
+        }
+
+        protected override void Die()
+        {
+            base.Die();
+
+            SaveData.Progress.maxBossKilled = Mathf.Max(SaveData.Progress.maxBossKilled, 1);
+            SaveData.Save();
+
+            RunManager.Instance.BossKilled = true;
         }
     }
 }

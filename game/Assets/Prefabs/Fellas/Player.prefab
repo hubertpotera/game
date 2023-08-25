@@ -42,7 +42,7 @@ GameObject:
   - component: {fileID: 2717400828368117928}
   - component: {fileID: 3457926909475400216}
   - component: {fileID: 2198933042692268075}
-  - component: {fileID: 7602603284788765482}
+  - component: {fileID: 724720098200674844}
   m_Layer: 0
   m_Name: Point Light
   m_TagString: Untagged
@@ -150,7 +150,7 @@ MonoBehaviour:
   m_LightCookieSize: {x: 1, y: 1}
   m_LightCookieOffset: {x: 0, y: 0}
   m_SoftShadowQuality: 0
---- !u!114 &7602603284788765482
+--- !u!114 &724720098200674844
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -159,11 +159,12 @@ MonoBehaviour:
   m_GameObject: {fileID: 1615329392593121833}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c018304038424fb46a2b5e63e0b3e591, type: 3}
+  m_Script: {fileID: 11500000, guid: 722b049d20bc5304e8f04408d7c3e7aa, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _speed: 5
-  _range: 4
+  Source: {fileID: 0}
+  _flickerSpeed: 5
+  _flickerRange: 4
 --- !u!1 &2105648848894891043
 GameObject:
   m_ObjectHideFlags: 0
@@ -369,7 +370,7 @@ Transform:
   - {fileID: 744781227}
   - {fileID: 2717400828368117928}
   m_Father: {fileID: 0}
-  m_RootOrder: 0
+  m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!143 &2816424213645003865
 CharacterController:
@@ -420,7 +421,8 @@ MonoBehaviour:
   KnockbackRecovery: 3
   LookRot: 0
   BlockInputs: 0
-  _inventoryPrefab: {fileID: 8136938461870685479, guid: bd1e2ef8c262d98478ebb47090b2a721,
+  CameraTarget: {fileID: 744781227}
+  _inventoryPrefab: {fileID: 1736825745337228243, guid: bd1e2ef8c262d98478ebb47090b2a721,
     type: 3}
 --- !u!114 &1392124043328758164
 MonoBehaviour:

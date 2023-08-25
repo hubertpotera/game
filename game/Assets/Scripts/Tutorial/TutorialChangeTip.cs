@@ -17,7 +17,7 @@ namespace Game
         {
             if(other.gameObject.TryGetComponent<PlayerController>(out PlayerController _) && _tipDisplay.text != _newTip)
             {
-                SoundManager.Instance.PlayEffect(SoundManager.Instance.AudioEffects.OpenInventory, transform.position);
+                SoundManager.Instance.PlayEffect(SoundManager.Instance.AudioEffects.OpenInventory);
                 _tipDisplay.text = _newTip;
             }
         }

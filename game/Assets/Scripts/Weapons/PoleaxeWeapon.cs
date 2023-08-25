@@ -19,6 +19,8 @@ namespace Game
         private WeaponCollider _collider2;
 
         private float _lastAttackEnd = 0f;
+        
+        private const float _comboWindow = 0.2f;
 
         protected override void AdditionalAwake()
         {
@@ -80,13 +82,13 @@ namespace Game
         {
             // Charge
             _animator.SetTrigger(animationTrigger);
-            SoundManager.Instance.PlayRandomEffect(SoundManager.Instance.AudioEffects.Windup, transform.position);
+            SoundManager.Instance.PlayRandomEffect(SoundManager.Instance.AudioEffects.Windup);
             damageArea.material.color = new Color(1f, 1f, 1f, 0.3f);
             yield return new WaitForSeconds(WindupTime);
 
             // Swing
             damageArea.material.color = new Color(.8f, .4f, .4f, 1.0f);
-            SoundManager.Instance.PlayRandomEffect(SoundManager.Instance.AudioEffects.Swing, transform.position);
+            SoundManager.Instance.PlayRandomEffect(SoundManager.Instance.AudioEffects.Swing);
             Parriable = true;
             yield return new WaitForSeconds(SwingTime);
 

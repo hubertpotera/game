@@ -23,7 +23,8 @@ namespace Game
         public float AttackRecoveryTime => ItemStats.BaseAttackRecoveryTime * _attackLenMod;
         public float ParryRecoveryTime => ItemStats.BaseParryRecoveryTime * _attackLenMod;
         private float _attackLenMod = 1;
-        public float SkillDamageMod = 1;
+        public float RampageDamageMod = 1;
+        public float BloodRageDamageMod = 1;
         
         protected Animator _animator;
         protected CombatFella _holder;
@@ -93,7 +94,7 @@ namespace Game
         {
             if (Parriable)
             {
-                SoundManager.Instance.PlayRandomEffect(SoundManager.Instance.AudioEffects.Parry, transform.position);
+                SoundManager.Instance.PlayRandomEffect(SoundManager.Instance.AudioEffects.Parry);
                 _animator.SetTrigger("parried");
                 GetInterupted(false);
                 Attacking = false;
@@ -147,7 +148,7 @@ namespace Game
             }
 
             // Add damage mod from weapon quality
-            float damage = ItemStats.BaseDamage * SkillDamageMod;
+            float damage = ItemStats.BaseDamage * RampageDamageMod * BloodRageDamageMod;
             damage += 0.2f * ((int)ItemStats.ItemQuality-2) * damage;
 
             float armourIgnore = ItemStats.ArmourPenetration;
@@ -178,7 +179,7 @@ namespace Game
                         targets[i].StartBleeding(3, _holder);
                     if(targets[i].TakeAHit(_holder, damage, 1-armourIgnore))
                     {
-                        SoundManager.Instance.PlayRandomEffect(SoundManager.Instance.AudioEffects.Hit, targets[i].transform.position);
+                        SoundManager.Instance.PlayRandomEffect(SoundManager.Instance.AudioEffects.Hit);
                     }
                 }
                 if (targets[i].Health <= 0)
@@ -232,7 +233,7 @@ namespace Game
                     target.StartBleeding(3, holder);
                 if(target.TakeAHit(holder, damage, 1-armourIgnore))
                 {
-                    SoundManager.Instance.PlayRandomEffect(SoundManager.Instance.AudioEffects.Hit, target.transform.position);
+                    SoundManager.Instance.PlayRandomEffect(SoundManager.Instance.AudioEffects.Hit);
                 }
             }
         }

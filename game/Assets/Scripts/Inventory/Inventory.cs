@@ -62,6 +62,7 @@ namespace Game
             fella.ItemDashDistMod = 1f;
             fella.ItemDashCooldownMod = 1f;
             fella.ItemAttackSpeedMod = 1f;
+            ClearItems();
             Item1Object = InitializeItem(fella, Item1);
             Item2Object = InitializeItem(fella, Item2);
             Item3Object = InitializeItem(fella, Item3);
@@ -71,9 +72,18 @@ namespace Game
             fella.ChangeHealth(0);
         }
 
+        private void ClearItems()
+        {
+            for (int i = 0; i < _itemHolder.childCount; i++)
+            {
+                Destroy(_itemHolder.GetChild(i).gameObject);
+            }
+        }
+
         private EffectItem InitializeItem(CombatFella holder, ItemEffectSO item)
         {
             if(item == null) return null;
+            Debug.Log("init");
             EffectItem o = Instantiate(item.PrefabWithEffect, _itemHolder).GetComponent<EffectItem>();
             o.Initialize(holder, item);
             return o;
@@ -112,6 +122,12 @@ namespace Game
             WeaponGO.transform.rotation = rot;
             Weapon = WeaponGO.GetComponent<Weapon>();
             Weapon.ItemStats = weapon;
+        }
+
+        public void DestroyHolders()
+        {
+            Destroy(WeaponGO); 
+            Destroy(_itemHolder.gameObject); 
         }
 
         public ref ItemWeaponSO GetWeaponByIndex(int idx)

@@ -25,6 +25,8 @@ namespace Game
         private float _lastAttackEnd = 0f;
         private int _attacksInRow = 0;
 
+        private const float _comboWindow = 0.2f;
+
         protected override void AdditionalAwake()
         {
             _damageArea1.material.color = new Color(1f, 1f, 1f, 0f);
@@ -37,7 +39,7 @@ namespace Game
             if (!Attacking && !Recovering)
             {
                 Attacking = true;
-                if(Time.time - _lastAttackEnd < 0.2f)
+                if(Time.time - _lastAttackEnd < _comboWindow)
                 {
                     MeshRenderer damageArea = _damageArea1;
                     WeaponCollider collider = _collider1;
@@ -60,6 +62,16 @@ namespace Game
                     _attackingCoroutine = StartCoroutine(DoTheAttack(_damageArea1, _collider1.Targets));
                     _attacksInRow = 1;
                 }
+                return true;
+            }
+            return false;
+        }
+
+        public override bool GetParried()
+        {
+            if(base.GetParried())
+            {
+                _lastAttackEnd = Time.time + ParryRecoveryTime;
                 return true;
             }
             return false;
@@ -92,13 +104,13 @@ namespace Game
         {
             // Charge
             _animator.SetTrigger("attack");
-            SoundManager.Instance.PlayRandomEffect(SoundManager.Instance.AudioEffects.Windup, transform.position);
+            SoundManager.Instance.PlayRandomEffect(SoundManager.Instance.AudioEffects.Windup);
             damageArea.material.color = new Color(1f, 1f, 1f, 0.3f);
             yield return new WaitForSeconds(WindupTime);
 
             // Swing
             damageArea.material.color = new Color(.8f, .4f, .4f, 1.0f);
-            SoundManager.Instance.PlayRandomEffect(SoundManager.Instance.AudioEffects.Swing, transform.position);
+            SoundManager.Instance.PlayRandomEffect(SoundManager.Instance.AudioEffects.Swing);
             Parriable = true;
             yield return new WaitForSeconds(SwingTime);
 

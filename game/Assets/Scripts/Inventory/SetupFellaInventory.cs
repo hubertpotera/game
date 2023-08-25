@@ -34,7 +34,7 @@ namespace Game
                 fellaInventory.OnSide = sideWeapon;
             }
 
-            this.enabled = false;
+            Destroy(this);
         }
     }
 }

@@ -16,7 +16,7 @@ MonoBehaviour:
   ItemQuality: 0
   Description: Longbow:<br>The most simple of bows. Deals a lot of damage but is
     slow to draw
-  WeaponPrefab: {fileID: 4610090049163595606, guid: 74d36e9fc5c8f444dac636550de22cff,
+  WeaponPrefab: {fileID: 5439130012941714793, guid: 74d36e9fc5c8f444dac636550de22cff,
     type: 3}
   ThreatRange: 6
   ArmourPenetration: 0.305

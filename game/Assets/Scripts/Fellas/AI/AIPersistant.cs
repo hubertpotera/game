@@ -7,7 +7,7 @@ namespace Game
     public class AIPersistant : AIBasic
     {
         [SerializeField]
-        private int _parriesNeededToStop = 2;
+        protected int _parriesNeededToStop = 2;
         
         protected override void GotParriedEffect()
         {

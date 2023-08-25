@@ -11,8 +11,8 @@ namespace Game
 
         public AudioEffectsSO AudioEffects;
 
-        // [SerializeField]
-        // private AudioSource _effectSource;
+        [SerializeField]
+        private AudioSource _effectSource;
         [SerializeField]
         private AudioSource _musicSource;
 
@@ -32,15 +32,21 @@ namespace Game
         }
 
 
-        public void PlayRandomEffect(List<AudioClip> clips, Vector3 position, float volume = 1f)
+        public void PlayRandomEffect(List<AudioClip> clips, float volume = 1f)
         {
-            AudioSource.PlayClipAtPoint(Choose(clips), position, volume);
+            _effectSource.PlayOneShot(Choose(clips), volume);
         }
 
-        public void PlayEffect(AudioClip clip, Vector3 position, float volume = 1f)
+        public void PlayEffect(AudioClip clip, float volume = 1f)
         {
-            AudioSource.PlayClipAtPoint(clip, position, volume);
+            _effectSource.PlayOneShot(clip, volume);
         }
+
+        public void StopEffects()
+        {
+            _effectSource.Stop();
+        }
+
 
         private static AudioClip Choose(List<AudioClip> clips)
         {

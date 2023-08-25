@@ -7,9 +7,6 @@ namespace Game
     public class CameraController : MonoBehaviour
     {
         public Transform Target;
-        
-        [SerializeField]
-        private GameObject _blackCamera;
 
         private const float SHAKE_FREQUENCY = 3.56f;
         private float _stress = 0;
@@ -22,11 +19,6 @@ namespace Game
 
             transform.position = Vector3.Lerp(transform.position, Target.position, Time.deltaTime*5f) + 0.01f * shakePos;
             transform.rotation = Quaternion.Lerp(transform.rotation, Target.rotation, Time.deltaTime*5f) * Quaternion.Euler(0.001f * shakeRot);
-        }
-
-        public void Black()
-        {
-            _blackCamera.SetActive(true);
         }
 
         private void GetShake(out Vector3 shakePos, out Vector3 shakeRot)
